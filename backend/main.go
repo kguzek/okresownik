@@ -42,6 +42,9 @@ func main() {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/health", healthHandler)
 	mux.Handle("/swagger/", httpSwagger.WrapHandler)
+	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		middleware.WriteError(w, http.StatusNotFound, "not found")
+	})
 
 	mux.HandleFunc("/api/auth/register", authHandler.Register)
 	mux.HandleFunc("/api/auth/login", authHandler.Login)
@@ -54,7 +57,7 @@ func main() {
 		case http.MethodPost:
 			cycleHandler.UpsertDay(w, r)
 		default:
-			http.Error(w, `{"error":"method not allowed"}`, http.StatusMethodNotAllowed)
+			middleware.WriteError(w, http.StatusMethodNotAllowed, "method not allowed")
 		}
 	})
 	protected.HandleFunc("/api/cycle/days/", func(w http.ResponseWriter, r *http.Request) {
@@ -62,14 +65,14 @@ func main() {
 			cycleHandler.DeleteDay(w, r)
 			return
 		}
-		http.Error(w, `{"error":"method not allowed"}`, http.StatusMethodNotAllowed)
+		middleware.WriteError(w, http.StatusMethodNotAllowed, "method not allowed")
 	})
 	protected.HandleFunc("/api/cycle/predictions", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodGet {
 			cycleHandler.GetPrediction(w, r)
 			return
 		}
-		http.Error(w, `{"error":"method not allowed"}`, http.StatusMethodNotAllowed)
+		middleware.WriteError(w, http.StatusMethodNotAllowed, "method not allowed")
 	})
 
 	protected.HandleFunc("/api/partner/code", func(w http.ResponseWriter, r *http.Request) {
@@ -77,35 +80,35 @@ func main() {
 			partnerHandler.GetPartnerCode(w, r)
 			return
 		}
-		http.Error(w, `{"error":"method not allowed"}`, http.StatusMethodNotAllowed)
+		middleware.WriteError(w, http.StatusMethodNotAllowed, "method not allowed")
 	})
 	protected.HandleFunc("/api/partner/code/regenerate", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodPost {
 			partnerHandler.RegeneratePartnerCode(w, r)
 			return
 		}
-		http.Error(w, `{"error":"method not allowed"}`, http.StatusMethodNotAllowed)
+		middleware.WriteError(w, http.StatusMethodNotAllowed, "method not allowed")
 	})
 	protected.HandleFunc("/api/partner/link", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodPost {
 			partnerHandler.LinkToPartner(w, r)
 			return
 		}
-		http.Error(w, `{"error":"method not allowed"}`, http.StatusMethodNotAllowed)
+		middleware.WriteError(w, http.StatusMethodNotAllowed, "method not allowed")
 	})
 	protected.HandleFunc("/api/partner/unlink", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodPost {
 			partnerHandler.UnlinkPartner(w, r)
 			return
 		}
-		http.Error(w, `{"error":"method not allowed"}`, http.StatusMethodNotAllowed)
+		middleware.WriteError(w, http.StatusMethodNotAllowed, "method not allowed")
 	})
 	protected.HandleFunc("/api/partner/view", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodGet {
 			partnerHandler.GetPartnerView(w, r)
 			return
 		}
-		http.Error(w, `{"error":"method not allowed"}`, http.StatusMethodNotAllowed)
+		middleware.WriteError(w, http.StatusMethodNotAllowed, "method not allowed")
 	})
 
 	authMw := middleware.AuthMiddleware(cfg.JWTSecret)
@@ -135,8 +138,8 @@ type healthResponse struct {
 // @Router /health [get]
 func healthHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
-		http.Error(w, `{"error":"method not allowed"}`, http.StatusMethodNotAllowed)
+		middleware.WriteError(w, http.StatusMethodNotAllowed, "method not allowed")
 		return
 	}
-	fmt.Fprint(w, `{"status":"ok"}`)
+	middleware.WriteJSON(w, http.StatusOK, healthResponse{Status: "ok"})
 }

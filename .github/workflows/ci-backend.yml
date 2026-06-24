@@ -1,0 +1,52 @@
+name: CI (Backend)
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - "backend/**"
+      - ".github/workflows/*-backend.yml"
+      - "!**/*.md"
+  pull_request:
+    paths:
+      - "backend/**"
+      - ".github/workflows/*-backend.yml"
+      - "!**/*.md"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref && github.ref || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./backend
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: ./backend/go.mod
+
+      - name: Lint
+        if: always()
+        run: go vet ./...
+
+      - name: Check formatting
+        if: always()
+        run: |
+          unformatted=$(gofmt -l .)
+          if [ -n "$unformatted" ]; then
+            echo "Unformatted files:"
+            echo "$unformatted"
+            exit 1
+          fi
+
+      - name: Build
+        if: always()
+        run: go build -o server .

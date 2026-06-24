@@ -1,7 +1,9 @@
 name: CI (Mobile)
 
 permissions:
-  contents: read
+  contents: write
+  issues: write
+  pull-requests: write
 
 on:
   push:
@@ -17,8 +19,6 @@ on:
       - "!**/*.md"
 
 concurrency:
-  # Make sure every job on main has unique group id (run_id), so cancel-in-progress only affects PR's
-  # https://stackoverflow.com/questions/74117321/if-condition-in-concurrency-in-gha
   group: ${{ github.workflow }}-${{ github.head_ref && github.ref || github.run_id }}
   cancel-in-progress: true
 
@@ -32,6 +32,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
 
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
@@ -39,48 +41,15 @@ jobs:
           channel: stable
           flutter-version: 3.44.3
 
-      - name: Install dependencies
+      - name: Install Flutter dependencies
         run: flutter pub get
 
-      - name: Build APK
-        id: build-apk
-        run: |
-          VERSION=$(grep '^version:' pubspec.yaml | sed 's/version: //' | tr '+' '-')
-          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
-          flutter build apk --release
+      - name: Semantic Release
+        if: github.event_name == 'push'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npx --package semantic-release@24 --package @semantic-release/exec@7 --package @semantic-release/github@11 --package semantic-release-pub@0.3 semantic-release
 
-      - name: Rename APK
-        run: |
-          VERSION=${{ steps.build-apk.outputs.version }}
-          cd build/app/outputs/flutter-apk
-          for f in app-release.apk app-*-release.apk; do
-            [ -f "$f" ] || continue
-            suffix=$(echo "$f" | sed -E 's/app(-.*)?-release\.apk/\1/; s/^-//')
-            if [ -n "$suffix" ]; then
-              new_name="okresownik-v${VERSION}-${suffix}.apk"
-            else
-              new_name="okresownik-v${VERSION}.apk"
-            fi
-            mv "$f" "$new_name"
-            echo "Renamed: $f → $new_name"
-          done
-
-      - name: Build app bundle
-        run: flutter build appbundle --release
-
-      - name: Rename AAB
-        run: |
-          VERSION=${{ steps.build-apk.outputs.version }}
-          cd build/app/outputs/bundle/release
-          mv app-release.aab "okresownik-v${VERSION}.aab"
-
-      - name: Create GitHub Release
-        if: github.ref_type == 'tag'
-        uses: softprops/action-gh-release@v3
-        with:
-          prerelease: true
-          working_directory: ./mobile/build/app/outputs
-          files: |
-            ./**/*.apk
-            ./**/*.aab
-          body: Release ${{ github.ref_name }} created by GitHub Actions.
+      - name: Verify build (PR only)
+        if: github.event_name == 'pull_request'
+        run: flutter build apk --release

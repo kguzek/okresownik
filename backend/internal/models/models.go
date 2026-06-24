@@ -55,7 +55,7 @@ type Prediction struct {
 }
 
 type PartnerCalendarResponse struct {
-	User       User       `json:"user"`
-	CycleDays  []CycleDay `json:"cycleDays"`
+	User       User        `json:"user"`
+	CycleDays  []CycleDay  `json:"cycleDays"`
 	Prediction *Prediction `json:"prediction,omitempty"`
 }

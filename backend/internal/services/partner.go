@@ -10,11 +10,11 @@ import (
 )
 
 var (
-	ErrPartnerCodeInvalid  = errors.New("invalid partner code")
-	ErrCannotPartnerSelf   = errors.New("cannot partner with yourself")
-	ErrAlreadyHasPartner   = errors.New("user already has a partner")
+	ErrPartnerCodeInvalid   = errors.New("invalid partner code")
+	ErrCannotPartnerSelf    = errors.New("cannot partner with yourself")
+	ErrAlreadyHasPartner    = errors.New("user already has a partner")
 	ErrPartnerAlreadyLinked = errors.New("target user already has a partner")
-	ErrNoPartnerLinked     = errors.New("no partner linked")
+	ErrNoPartnerLinked      = errors.New("no partner linked")
 )
 
 type PartnerService struct {

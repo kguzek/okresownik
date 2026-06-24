@@ -15,10 +15,10 @@ import (
 )
 
 var (
-	ErrEmailTaken       = errors.New("email already registered")
-	ErrInvalidEmail     = errors.New("invalid email format")
-	ErrInvalidPassword  = errors.New("password must be at least 8 characters")
-	ErrInvalidName      = errors.New("name is required")
+	ErrEmailTaken         = errors.New("email already registered")
+	ErrInvalidEmail       = errors.New("invalid email format")
+	ErrInvalidPassword    = errors.New("password must be at least 8 characters")
+	ErrInvalidName        = errors.New("name is required")
 	ErrInvalidCredentials = errors.New("invalid email or password")
 )
 

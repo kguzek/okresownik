@@ -221,9 +221,7 @@ function App(): JSX.Element {
               </div>
             </div>
             <div className="mx-auto max-w-sm space-y-3">
-              <p className="text-sm text-gray-500">
-                Pobierz bezpośrednio z GitHub Releases:
-              </p>
+              <p className="text-sm text-gray-500">Pobierz bezpośrednio z GitHub Releases:</p>
               <div className="flex gap-3">
                 <Button asChild className="flex-1">
                   <a

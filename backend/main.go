@@ -27,6 +27,13 @@ func main() {
 	partnerHandler := handlers.NewPartnerHandler(partnerService)
 
 	mux := http.NewServeMux()
+	mux.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodGet {
+			http.Error(w, `{"error":"method not allowed"}`, http.StatusMethodNotAllowed)
+			return
+		}
+		fmt.Fprint(w, `{"status":"ok"}`)
+	})
 
 	mux.HandleFunc("/api/auth/register", authHandler.Register)
 	mux.HandleFunc("/api/auth/login", authHandler.Login)
@@ -49,7 +56,13 @@ func main() {
 		}
 		http.Error(w, `{"error":"method not allowed"}`, http.StatusMethodNotAllowed)
 	})
-	protected.HandleFunc("/api/cycle/predictions", cycleHandler.GetPrediction)
+	protected.HandleFunc("/api/cycle/predictions", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == http.MethodGet {
+			cycleHandler.GetPrediction(w, r)
+			return
+		}
+		http.Error(w, `{"error":"method not allowed"}`, http.StatusMethodNotAllowed)
+	})
 
 	protected.HandleFunc("/api/partner/code", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodGet {

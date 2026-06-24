@@ -8,6 +8,7 @@ import '../screens/auth/register_screen.dart';
 import '../screens/dashboard/dashboard_screen.dart';
 import '../screens/partner/partner_share_screen.dart';
 import '../screens/partner/partner_view_screen.dart';
+import '../screens/settings/settings_screen.dart';
 
 GoRouter createRouter(AuthCubit authCubit) {
   return GoRouter(
@@ -43,6 +44,10 @@ GoRouter createRouter(AuthCubit authCubit) {
       GoRoute(
         path: '/partner/view',
         builder: (_, _) => const PartnerViewScreen(),
+      ),
+      GoRoute(
+        path: '/settings',
+        builder: (_, _) => const SettingsScreen(),
       ),
     ],
   );

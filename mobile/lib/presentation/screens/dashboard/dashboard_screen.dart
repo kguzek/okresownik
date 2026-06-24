@@ -6,6 +6,7 @@ import 'package:table_calendar/table_calendar.dart';
 
 import '../../../core/theme/app_theme.dart';
 import '../../../data/models/cycle_day_model.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../../logic/auth/auth_cubit.dart';
 import '../../../logic/cycle/cycle_cubit.dart';
 import '../../../logic/cycle/cycle_state.dart';
@@ -77,14 +78,18 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context);
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Okresownik'),
+        title: Text(t.appTitle),
         actions: [
           const _PartnerStatusIcon(),
           PopupMenuButton<String>(
             onSelected: (value) {
               switch (value) {
+                case 'settings':
+                  context.go('/settings');
                 case 'share':
                   context.go('/partner/share');
                 case 'view':
@@ -94,10 +99,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
               }
             },
             itemBuilder: (context) => [
-              const PopupMenuItem(value: 'share', child: Text('Share with Partner')),
-              const PopupMenuItem(value: 'view', child: Text("View Partner's Calendar")),
+              PopupMenuItem(value: 'settings', child: Text(t.settings)),
+              PopupMenuItem(value: 'share', child: Text(t.shareWithPartner)),
+              PopupMenuItem(value: 'view', child: Text(t.viewPartnerCalendar)),
               const PopupMenuDivider(),
-              const PopupMenuItem(value: 'logout', child: Text('Logout')),
+              PopupMenuItem(value: 'logout', child: Text(t.logout)),
             ],
           ),
         ],
@@ -133,8 +139,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 icon: const Icon(Icons.edit),
                 label: Text(
                   _selectedDay != null
-                      ? 'Log ${DateFormat('MMM d').format(_selectedDay!)}'
-                      : 'Log Today',
+                      ? t.logDate(DateFormat('MMM d').format(_selectedDay!))
+                      : t.logToday,
                 ),
               ),
             ),
@@ -148,6 +154,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
 class _PredictionSummaryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context);
+
     return BlocBuilder<CycleCubit, CycleState>(
       builder: (context, state) {
         final prediction = state.prediction;
@@ -171,13 +179,13 @@ class _PredictionSummaryCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Cycle Day $cycleDay',
+                        t.cycleDayText(cycleDay),
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                               fontWeight: FontWeight.w600,
                             ),
                       ),
                       Text(
-                        'Next period expected ~$nextPeriod',
+                        t.nextPeriodExpectedText(nextPeriod),
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
                               color: Colors.grey[600],
                             ),
@@ -197,16 +205,18 @@ class _PredictionSummaryCard extends StatelessWidget {
 class _LegendRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context);
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          _LegendDot(color: AppTheme.periodRed, label: 'Period'),
+          _LegendDot(color: AppTheme.periodRed, label: t.periodLabel),
           const SizedBox(width: 16),
-          _LegendDot(color: AppTheme.fertileGreen, label: 'Fertile'),
+          _LegendDot(color: AppTheme.fertileGreen, label: t.fertileLabel),
           const SizedBox(width: 16),
-          _LegendDot(color: AppTheme.intercourseAmber, label: 'Intimacy'),
+          _LegendDot(color: AppTheme.intercourseAmber, label: t.intimacyLabel),
         ],
       ),
     );
@@ -276,6 +286,7 @@ class _DayDetailsSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context);
     final dateStr = DateFormat('EEEE, MMMM d, yyyy').format(date);
     final isToday = isSameDay(date, DateTime.now());
 
@@ -305,7 +316,7 @@ class _DayDetailsSheet extends StatelessWidget {
           ),
           if (isToday)
             Text(
-              'Today',
+              t.today,
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: Theme.of(context).colorScheme.primary,
@@ -316,14 +327,14 @@ class _DayDetailsSheet extends StatelessWidget {
             if (dayData!.isPeriod)
               _InfoChip(
                 icon: Icons.water_drop,
-                label: 'Period',
+                label: t.periodLabel,
                 color: AppTheme.periodRed,
-                detail: dayData!.flow.isNotEmpty ? 'Flow: ${dayData!.flow}' : null,
+                detail: dayData!.flow.isNotEmpty ? t.flowText(dayData!.flow) : null,
               ),
             if (dayData!.isIntercourse)
-              const _InfoChip(
+              _InfoChip(
                 icon: Icons.favorite,
-                label: 'Intercourse logged',
+                label: t.intercourseLogged,
                 color: AppTheme.intercourseAmber,
               ),
             if (dayData!.notes.isNotEmpty)
@@ -338,7 +349,7 @@ class _DayDetailsSheet extends StatelessWidget {
             OutlinedButton.icon(
               onPressed: onClearDay,
               icon: const Icon(Icons.delete_outline),
-              label: const Text('Clear day data'),
+              label: Text(t.clearDayData),
               style: OutlinedButton.styleFrom(foregroundColor: Colors.red),
             ),
           ] else ...[
@@ -348,7 +359,7 @@ class _DayDetailsSheet extends StatelessWidget {
                   child: ElevatedButton.icon(
                     onPressed: onMarkPeriod,
                     icon: const Icon(Icons.water_drop),
-                    label: const Text('Period'),
+                    label: Text(t.periodLabel),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppTheme.lightPink,
                       foregroundColor: AppTheme.periodRed,
@@ -360,7 +371,7 @@ class _DayDetailsSheet extends StatelessWidget {
                   child: ElevatedButton.icon(
                     onPressed: onMarkIntercourse,
                     icon: const Icon(Icons.favorite),
-                    label: const Text('Intimacy'),
+                    label: Text(t.intimacyLabel),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppTheme.fertileLight,
                       foregroundColor: AppTheme.intercourseAmber,

@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'core/api/api_client.dart';
 import 'core/theme/app_theme.dart';
 import 'data/repositories/auth_repository.dart';
 import 'data/repositories/cycle_repository.dart';
 import 'data/repositories/partner_repository.dart';
+import 'l10n/app_localizations.dart';
 import 'logic/auth/auth_cubit.dart';
 import 'logic/cycle/cycle_cubit.dart';
+import 'logic/locale/locale_cubit.dart';
 import 'logic/partner/partner_cubit.dart';
 import 'presentation/router/app_router.dart';
 
@@ -26,6 +29,7 @@ class _OkresownikAppState extends State<OkresownikApp> {
   late final AuthCubit _authCubit;
   late final CycleCubit _cycleCubit;
   late final PartnerCubit _partnerCubit;
+  late final LocaleCubit _localeCubit;
 
   @override
   void initState() {
@@ -37,6 +41,7 @@ class _OkresownikAppState extends State<OkresownikApp> {
     _authCubit = AuthCubit(_authRepository);
     _cycleCubit = CycleCubit(_cycleRepository);
     _partnerCubit = PartnerCubit(_partnerRepository);
+    _localeCubit = LocaleCubit();
 
     _authCubit.checkAuth();
   }
@@ -47,6 +52,7 @@ class _OkresownikAppState extends State<OkresownikApp> {
     _authCubit.close();
     _cycleCubit.close();
     _partnerCubit.close();
+    _localeCubit.close();
     super.dispose();
   }
 
@@ -59,12 +65,28 @@ class _OkresownikAppState extends State<OkresownikApp> {
         BlocProvider.value(value: _authCubit),
         BlocProvider.value(value: _cycleCubit),
         BlocProvider.value(value: _partnerCubit),
+        BlocProvider.value(value: _localeCubit),
       ],
-      child: MaterialApp.router(
-        title: 'Okresownik',
-        theme: AppTheme.lightTheme,
-        routerConfig: router,
-        debugShowCheckedModeBanner: false,
+      child: BlocBuilder<LocaleCubit, Locale>(
+        builder: (context, locale) {
+          return MaterialApp.router(
+            title: 'Okresownik',
+            theme: AppTheme.lightTheme,
+            routerConfig: router,
+            debugShowCheckedModeBanner: false,
+            locale: locale,
+            localizationsDelegates: const [
+              AppLocalizations.delegate,
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            supportedLocales: [
+              Locale('pl'),
+              Locale('en'),
+            ],
+          );
+        },
       ),
     );
   }

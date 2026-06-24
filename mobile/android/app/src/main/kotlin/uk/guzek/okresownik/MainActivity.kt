@@ -1,4 +1,4 @@
-package com.example.okresownik
+package uk.guzek.okresownik
 
 import io.flutter.embedding.android.FlutterActivity
 

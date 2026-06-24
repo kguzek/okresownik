@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 
 import '../../../core/theme/app_theme.dart';
 import '../../../data/models/partner_model.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../../logic/partner/partner_cubit.dart';
 import '../../../logic/partner/partner_state.dart';
 import '../../widgets/calendar_widget.dart';
@@ -26,8 +27,10 @@ class _PartnerViewScreenState extends State<PartnerViewScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context);
+
     return Scaffold(
-      appBar: AppBar(title: const Text("Partner's Calendar")),
+      appBar: AppBar(title: Text(t.partnersCalendar)),
       body: BlocBuilder<PartnerCubit, PartnerState>(
         builder: (context, state) {
           if (state.status == PartnerStatus.loading) {
@@ -44,12 +47,12 @@ class _PartnerViewScreenState extends State<PartnerViewScreen> {
                     const Icon(Icons.link_off, size: 64, color: Colors.grey),
                     const SizedBox(height: 16),
                     Text(
-                      'Not linked to a partner yet',
+                      t.notLinkedYet,
                       style: Theme.of(context).textTheme.titleMedium,
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'Go to Share with Partner and enter their code',
+                      t.notLinkedSubtitle,
                       textAlign: TextAlign.center,
                       style: TextStyle(color: Colors.grey[600]),
                     ),
@@ -61,7 +64,7 @@ class _PartnerViewScreenState extends State<PartnerViewScreen> {
 
           final view = state.partnerView;
           if (view == null) {
-            return const Center(child: Text('No partner data available'));
+            return Center(child: Text(t.noDataAvailable));
           }
 
           return Column(
@@ -79,7 +82,7 @@ class _PartnerViewScreenState extends State<PartnerViewScreen> {
               Padding(
                 padding: const EdgeInsets.all(16),
                 child: Text(
-                  'Read-only view of your partner\'s cycle',
+                  t.readOnlyView,
                   style: TextStyle(color: Colors.grey[500], fontSize: 12),
                 ),
               ),
@@ -98,6 +101,7 @@ class _PartnerHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context);
     final prediction = partner.prediction;
 
     return Container(
@@ -130,7 +134,9 @@ class _PartnerHeader extends StatelessWidget {
                 ),
                 if (prediction != null)
                   Text(
-                    'Next period ~${DateFormat('MMM d').format(prediction.nextPeriodStart)}',
+                    t.partnerNextPeriodText(
+                      DateFormat('MMM d').format(prediction.nextPeriodStart),
+                    ),
                     style: TextStyle(color: Colors.grey[600], fontSize: 13),
                   ),
               ],

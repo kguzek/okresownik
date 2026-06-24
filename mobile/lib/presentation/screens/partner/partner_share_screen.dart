@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../core/theme/app_theme.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../../logic/partner/partner_cubit.dart';
 import '../../../logic/partner/partner_state.dart';
 
@@ -31,8 +32,9 @@ class _PartnerShareScreenState extends State<PartnerShareScreen> {
 
   void _copyCode(String code) {
     Clipboard.setData(ClipboardData(text: code));
+    final t = AppLocalizations.of(context);
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Partner code copied to clipboard')),
+      SnackBar(content: Text(t.codeCopied)),
     );
   }
 
@@ -43,24 +45,24 @@ class _PartnerShareScreenState extends State<PartnerShareScreen> {
   }
 
   void _unlinkPartner() {
+    final t = AppLocalizations.of(context);
+
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Unlink Partner'),
-        content: const Text(
-          'Are you sure you want to unlink your partner? They will no longer see your calendar.',
-        ),
+        title: Text(t.unlinkPartner),
+        content: Text(t.unlinkConfirm),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancel'),
+            child: Text(t.cancel),
           ),
           TextButton(
             onPressed: () {
               Navigator.pop(ctx);
               context.read<PartnerCubit>().unlinkPartner();
             },
-            child: const Text('Unlink'),
+            child: Text(t.unlink),
           ),
         ],
       ),
@@ -69,8 +71,10 @@ class _PartnerShareScreenState extends State<PartnerShareScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context);
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Partner Sharing')),
+      appBar: AppBar(title: Text(t.partnerSharing)),
       body: BlocBuilder<PartnerCubit, PartnerState>(
         builder: (context, state) {
           if (state.status == PartnerStatus.loading) {
@@ -89,7 +93,7 @@ class _PartnerShareScreenState extends State<PartnerShareScreen> {
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  'Share Your Calendar',
+                  t.shareYourCalendar,
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.bold,
@@ -97,7 +101,7 @@ class _PartnerShareScreenState extends State<PartnerShareScreen> {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Your partner can view your period and fertility predictions with a pairing code.',
+                  t.shareSubtitle,
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         color: Colors.grey[600],
@@ -110,7 +114,7 @@ class _PartnerShareScreenState extends State<PartnerShareScreen> {
                     child: Column(
                       children: [
                         Text(
-                          'Your Partner Code',
+                          t.yourPartnerCode,
                           style: Theme.of(context).textTheme.titleSmall,
                         ),
                         const SizedBox(height: 12),
@@ -131,14 +135,14 @@ class _PartnerShareScreenState extends State<PartnerShareScreen> {
                                   ? () => _copyCode(state.partnerCode!)
                                   : null,
                               icon: const Icon(Icons.copy),
-                              label: const Text('Copy'),
+                              label: Text(t.copy),
                             ),
                             const SizedBox(width: 16),
                             TextButton.icon(
                               onPressed: () =>
                                   context.read<PartnerCubit>().regenerateCode(),
                               icon: const Icon(Icons.refresh),
-                              label: const Text('Regenerate'),
+                              label: Text(t.regenerate),
                             ),
                           ],
                         ),
@@ -162,13 +166,13 @@ class _PartnerShareScreenState extends State<PartnerShareScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'Linked with ${state.partnerView!.user.name}',
+                                  t.linkedWithText(state.partnerView!.user.name),
                                   style: const TextStyle(
                                     fontWeight: FontWeight.w600,
                                   ),
                                 ),
                                 Text(
-                                  'They can view your calendar',
+                                  t.theyCanView,
                                   style: TextStyle(
                                     color: Colors.grey[600],
                                     fontSize: 12,
@@ -185,7 +189,7 @@ class _PartnerShareScreenState extends State<PartnerShareScreen> {
                   OutlinedButton.icon(
                     onPressed: _unlinkPartner,
                     icon: const Icon(Icons.link_off),
-                    label: const Text('Unlink Partner'),
+                    label: Text(t.unlinkPartner),
                     style: OutlinedButton.styleFrom(
                       foregroundColor: Colors.red,
                     ),
@@ -195,14 +199,14 @@ class _PartnerShareScreenState extends State<PartnerShareScreen> {
                     ElevatedButton.icon(
                       onPressed: () => setState(() => _showLinkForm = true),
                       icon: const Icon(Icons.link),
-                      label: const Text("Enter Partner's Code"),
+                      label: Text(t.enterPartnerCode),
                     )
                   else ...[
                     TextField(
                       controller: _linkCodeController,
                       decoration: InputDecoration(
-                        labelText: "Partner's Code",
-                        hintText: 'Enter the code your partner shared',
+                        labelText: t.partnerCodeLabel,
+                        hintText: t.partnerCodeHint,
                         prefixIcon: const Icon(Icons.vpn_key),
                         suffixIcon: IconButton(
                           icon: const Icon(Icons.clear),
@@ -218,14 +222,14 @@ class _PartnerShareScreenState extends State<PartnerShareScreen> {
                           child: OutlinedButton(
                             onPressed: () =>
                                 setState(() => _showLinkForm = false),
-                            child: const Text('Cancel'),
+                            child: Text(t.cancel),
                           ),
                         ),
                         const SizedBox(width: 12),
                         Expanded(
                           child: ElevatedButton(
                             onPressed: _linkPartner,
-                            child: const Text('Link'),
+                            child: Text(t.link),
                           ),
                         ),
                       ],

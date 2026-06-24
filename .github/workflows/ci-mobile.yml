@@ -59,8 +59,8 @@ jobs:
         with:
           prerelease: true
           working_directory: ./mobile/build/app/outputs
-          files:
-            - "./**/*.apk"
-            - "./**/*.aab"
+          files: |
+            ./**/*.apk
+            ./**/*.aab
           body: |
             Release ${{ github.ref_name }} created by GitHub Actions.

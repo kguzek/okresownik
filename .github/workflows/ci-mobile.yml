@@ -39,12 +39,6 @@ jobs:
           channel: stable
           flutter-version: 3.44.3
 
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@v2
-        with:
-          api-level: 33
-          build-tools: 33.0.0
-
       - name: Install dependencies
         run: flutter pub get
 
@@ -62,5 +56,4 @@ jobs:
           files: |
             ./**/*.apk
             ./**/*.aab
-          body: |
-            Release ${{ github.ref_name }} created by GitHub Actions.
+          body: Release ${{ github.ref_name }} created by GitHub Actions.

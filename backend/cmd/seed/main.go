@@ -24,51 +24,51 @@ func main() {
 		log.Fatalf("failed to hash password: %v", err)
 	}
 
-	alice := models.User{
-		Email:        "alice@example.com",
+	anna := models.User{
+		Email:        "anna@okresownik.pl",
 		PasswordHash: string(passwordHash),
-		Name:         "Alice",
-		PartnerCode:  "ALIC01",
+		Name:         "Anna",
+		PartnerCode:  "ANNA01",
 	}
-	bob := models.User{
-		Email:        "bob@example.com",
+	jan := models.User{
+		Email:        "jan@okresownik.pl",
 		PasswordHash: string(passwordHash),
-		Name:         "Bob",
-		PartnerCode:  "BOBX01",
+		Name:         "Jan",
+		PartnerCode:  "JANX01",
 	}
-	carol := models.User{
-		Email:        "carol@example.com",
+	zofia := models.User{
+		Email:        "zofia@okresownik.pl",
 		PasswordHash: string(passwordHash),
-		Name:         "Carol",
-		PartnerCode:  "CAROL1",
+		Name:         "Zofia",
+		PartnerCode:  "ZOFI01",
 	}
 
-	db.Where("email = ?", alice.Email).FirstOrCreate(&alice)
-	db.Where("email = ?", bob.Email).FirstOrCreate(&bob)
-	db.Where("email = ?", carol.Email).FirstOrCreate(&carol)
+	db.Where("email = ?", anna.Email).FirstOrCreate(&anna)
+	db.Where("email = ?", jan.Email).FirstOrCreate(&jan)
+	db.Where("email = ?", zofia.Email).FirstOrCreate(&zofia)
 
-	alice.PartnerID = &bob.ID
-	bob.PartnerID = &alice.ID
-	db.Save(&alice)
-	db.Save(&bob)
+	anna.PartnerID = &jan.ID
+	jan.PartnerID = &anna.ID
+	db.Save(&anna)
+	db.Save(&jan)
 
-	db.Where("user_id IN (?)", []uint{alice.ID, bob.ID, carol.ID}).Delete(&models.CycleDay{})
+	db.Unscoped().Where("user_id IN (?)", []uint{anna.ID, jan.ID, zofia.ID}).Delete(&models.CycleDay{})
 
-	seedCycleDataForUser(db, alice.ID, time.Date(2026, 1, 5, 0, 0, 0, 0, time.UTC), 6, 5, 28)
-	seedCycleDataForUser(db, carol.ID, time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC), 4, 4, 30)
+	seedCycleDataForUser(db, anna.ID, time.Date(2026, 1, 5, 0, 0, 0, 0, time.UTC), 7, 5, 28)
+	seedCycleDataForUser(db, zofia.ID, time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC), 6, 4, 30)
 
-	seedIntercourseDays(db, alice.ID)
+	seedIntercourseDays(db, anna.ID)
 
 	fmt.Println("seed completed successfully")
 	fmt.Println()
 	fmt.Println("Demo accounts (password: password123):")
-	fmt.Printf("  Alice (has partner Bob): %s\n", alice.Email)
-	fmt.Printf("  Bob (partner of Alice):  %s\n", bob.Email)
-	fmt.Printf("  Carol (no partner):      %s\n", carol.Email)
+	fmt.Printf("  Anna (has partner Jan): %s\n", anna.Email)
+	fmt.Printf("  Jan (partner of Anna):  %s\n", jan.Email)
+	fmt.Printf("  Zofia (no partner):     %s\n", zofia.Email)
 	fmt.Println()
-	fmt.Printf("Alice's partner code: %s\n", alice.PartnerCode)
-	fmt.Printf("Bob's partner code:   %s\n", bob.PartnerCode)
-	fmt.Printf("Carol's partner code: %s\n", carol.PartnerCode)
+	fmt.Printf("Anna's partner code: %s\n", anna.PartnerCode)
+	fmt.Printf("Jan's partner code:  %s\n", jan.PartnerCode)
+	fmt.Printf("Zofia's partner code: %s\n", zofia.PartnerCode)
 }
 
 func seedCycleDataForUser(db *gorm.DB, userID uint, start time.Time, numCycles int, periodDuration int, cycleLength int) {

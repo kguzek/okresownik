@@ -50,7 +50,7 @@ func (s *CycleService) UpsertDay(userID uint, date time.Time, isPeriod bool, isI
 
 	err := s.DB.Clauses(clause.OnConflict{
 		Columns:   []clause.Column{{Name: "user_id"}, {Name: "date"}},
-		DoUpdates: clause.AssignmentColumns([]string{"is_period", "is_intercourse", "flow", "notes", "updated_at"}),
+		DoUpdates: clause.AssignmentColumns([]string{"is_period", "is_intercourse", "flow", "notes", "updated_at", "deleted_at"}),
 	}).Create(&day).Error
 
 	if err != nil {

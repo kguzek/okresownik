@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 	"strconv"
 	"strings"
@@ -71,20 +72,29 @@ func (h *CycleHandler) GetDays(w http.ResponseWriter, r *http.Request) {
 		parsed, err := time.Parse("2006-01-02", fromStr)
 		if err == nil {
 			from = parsed
+		} else {
+			log.Printf("[GetDays] user=%d invalid from=%q: %v", userID, fromStr, err)
 		}
 	}
 	if toStr != "" {
 		parsed, err := time.Parse("2006-01-02", toStr)
 		if err == nil {
 			to = parsed
+		} else {
+			log.Printf("[GetDays] user=%d invalid to=%q: %v", userID, toStr, err)
 		}
 	}
 
+	log.Printf("[GetDays] user=%d from=%q to=%q", userID, fromStr, toStr)
+
 	days, err := h.CycleService.GetDays(userID, from, to)
 	if err != nil {
+		log.Printf("[GetDays] user=%d ERROR: %v", userID, err)
 		writeError(w, "failed to fetch cycle days", http.StatusInternalServerError)
 		return
 	}
+
+	log.Printf("[GetDays] user=%d found %d days", userID, len(days))
 
 	responses := make([]dayResponse, 0, len(days))
 	for _, d := range days {
@@ -112,22 +122,29 @@ func (h *CycleHandler) UpsertDay(w http.ResponseWriter, r *http.Request) {
 
 	var req upsertDayRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		log.Printf("[UpsertDay] user=%d invalid body: %v", userID, err)
 		writeError(w, "invalid request body", http.StatusBadRequest)
 		return
 	}
 
 	date, err := time.Parse("2006-01-02", req.Date)
 	if err != nil {
+		log.Printf("[UpsertDay] user=%d invalid date %q: %v", userID, req.Date, err)
 		writeError(w, "invalid date format, use YYYY-MM-DD", http.StatusBadRequest)
 		return
 	}
 
+	log.Printf("[UpsertDay] user=%d date=%q isPeriod=%v isIntercourse=%v flow=%q",
+		userID, req.Date, req.IsPeriod, req.IsIntercourse, req.Flow)
+
 	day, err := h.CycleService.UpsertDay(userID, date, req.IsPeriod, req.IsIntercourse, req.Flow, req.Notes)
 	if err != nil {
+		log.Printf("[UpsertDay] user=%d ERROR: %v", userID, err)
 		writeError(w, "failed to save cycle day", http.StatusInternalServerError)
 		return
 	}
 
+	log.Printf("[UpsertDay] user=%d date=%q saved id=%d", userID, req.Date, day.ID)
 	writeJSON(w, http.StatusOK, toDayResponse(day))
 }
 

@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -13,6 +14,37 @@ class ApiClient {
   ApiClient({http.Client? client, String? baseUrl})
       : _client = client ?? http.Client(),
         baseUrl = baseUrl ?? AppConfig.apiBaseUrl;
+
+  void _logRequest({
+    required String method,
+    required String endpoint,
+    Map<String, String>? queryParams,
+    Object? body,
+    http.Response? response,
+    Object? error,
+  }) {
+    if (!kDebugMode) return;
+    final buf = StringBuffer();
+    buf.writeln('');
+    buf.writeln('════════════════════════════════════════════');
+    buf.writeln('$method $endpoint');
+    if (queryParams != null && queryParams.isNotEmpty) {
+      buf.writeln('  query: $queryParams');
+    }
+    if (body != null) {
+      buf.writeln('  body: $body');
+    }
+    if (response != null) {
+      buf.writeln('  <- ${response.statusCode} ${response.reasonPhrase}');
+      buf.writeln('  body: ${response.body}');
+    }
+    if (error != null) {
+      buf.writeln('  !!! $error');
+    }
+    buf.writeln('════════════════════════════════════════════');
+    buf.writeln('');
+    debugPrint(buf.toString());
+  }
 
   Future<Map<String, String>> _headers({bool withAuth = true}) async {
     final headers = <String, String>{
@@ -47,6 +79,13 @@ class ApiClient {
         .get(uri, headers: await _headers(withAuth: withAuth))
         .timeout(AppConfig.apiTimeout);
 
+    _logRequest(
+      method: 'GET',
+      endpoint: uri.toString(),
+      queryParams: queryParams,
+      response: response,
+    );
+
     return _handleResponse(response);
   }
 
@@ -61,6 +100,13 @@ class ApiClient {
     final response = await _client
         .get(uri, headers: await _headers(withAuth: withAuth))
         .timeout(AppConfig.apiTimeout);
+
+    _logRequest(
+      method: 'GET',
+      endpoint: uri.toString(),
+      queryParams: queryParams,
+      response: response,
+    );
 
     if (response.statusCode == 200) {
       final decoded = jsonDecode(response.body);
@@ -89,6 +135,13 @@ class ApiClient {
         )
         .timeout(AppConfig.apiTimeout);
 
+    _logRequest(
+      method: 'POST',
+      endpoint: uri.toString(),
+      body: body,
+      response: response,
+    );
+
     return _handleResponse(response);
   }
 
@@ -107,6 +160,13 @@ class ApiClient {
         )
         .timeout(AppConfig.apiTimeout);
 
+    _logRequest(
+      method: 'PUT',
+      endpoint: uri.toString(),
+      body: body,
+      response: response,
+    );
+
     return _handleResponse(response);
   }
 
@@ -119,6 +179,12 @@ class ApiClient {
     final response = await _client
         .delete(uri, headers: await _headers(withAuth: withAuth))
         .timeout(AppConfig.apiTimeout);
+
+    _logRequest(
+      method: 'DELETE',
+      endpoint: uri.toString(),
+      response: response,
+    );
 
     if (response.statusCode != 204 && response.statusCode != 200) {
       _throwByStatus(response);

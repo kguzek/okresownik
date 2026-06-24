@@ -9,8 +9,8 @@
     "preview": "vite preview",
     "lint": "biome check .",
     "lint:fix": "biome check --write .",
-    "format": "prettier --write .",
-    "format:check": "prettier --check .",
+    "format": "prettier --write --ignore-unknown .",
+    "format:check": "prettier --check --ignore-unknown .",
     "types:check": "tsc -b --noEmit",
     "prepare": "husky"
   },
@@ -41,7 +41,7 @@
     "vite": "^8.1.0"
   },
   "lint-staged": {
-    "*": "prettier --write",
+    "*": "prettier --write --ignore-unknown",
     "*.{ts,tsx}": "biome check"
   },
   "packageManager": "pnpm@11.2.2",

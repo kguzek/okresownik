@@ -1,4 +1,15 @@
-import { ChevronRight, Globe, Heart, Lock, Mail, Share2, Smartphone, Star, Zap } from 'lucide-react'
+import {
+  ChevronRight,
+  FlaskConical,
+  Globe,
+  Heart,
+  Lock,
+  Mail,
+  Share2,
+  Smartphone,
+  Star,
+  Zap,
+} from 'lucide-react'
 import { motion } from 'motion/react'
 import type { JSX } from 'react'
 import { Button } from '@/components/ui/button'
@@ -54,10 +65,10 @@ function App(): JSX.Element {
         transition={{ duration: 0.6 }}
         className="sticky top-0 z-50 border-b border-pink-100 bg-white/80 backdrop-blur-md"
       >
-        <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3">
-          <div className="flex items-center gap-2">
-            <Heart className="size-6 text-primary" />
-            <span className="text-lg font-semibold text-gray-900">Okresownik</span>
+        <div className="mx-auto flex max-w-5xl items-center justify-between px-3 py-2.5">
+          <div className="flex items-center gap-1.5">
+            <img src="/logo.png" alt="Okresownik" className="size-6" />
+            <span className="text-sm sm:text-lg font-semibold text-gray-900">Okresownik</span>
           </div>
           <nav className="hidden items-center gap-6 text-sm text-gray-600 sm:flex">
             <a href="#funkcje" className="hover:text-primary transition-colors">
@@ -83,7 +94,7 @@ function App(): JSX.Element {
 
       <main>
         {/* Hero */}
-        <section className="relative overflow-hidden px-4 pt-20 pb-16 sm:pt-28 sm:pb-24">
+        <section className="relative overflow-hidden px-3 pt-14 pb-12 sm:pt-28 sm:pb-24">
           <div className="absolute inset-0 -z-10">
             <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-pink-100/40 via-transparent to-transparent" />
           </div>
@@ -93,31 +104,31 @@ function App(): JSX.Element {
             transition={{ duration: 0.7, delay: 0.2 }}
             className="mx-auto max-w-3xl text-center"
           >
-            <div className="mb-6 inline-flex items-center gap-2 rounded-full bg-pink-100 px-4 py-1.5 text-sm text-primary">
-              <Heart className="size-4 fill-primary" />
+            <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-pink-100 px-3 py-1 text-xs sm:text-sm text-primary">
+              <Heart className="size-3.5 fill-primary" />
               Otwarte oprogramowanie
             </div>
-            <h1 className="mb-6 text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl md:text-6xl">
+            <h1 className="mb-4 text-3xl font-bold tracking-tight text-gray-900 sm:text-5xl md:text-6xl">
               Śledź swój cykl{' '}
               <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
                 z partnerem
               </span>
             </h1>
-            <p className="mx-auto mb-10 max-w-xl text-lg leading-relaxed text-gray-600">
+            <p className="mx-auto mb-6 max-w-xl text-sm sm:text-base md:text-lg leading-relaxed text-gray-600">
               Okresownik to darmowy, otwartoźródłowy kalendarzyk menstruacyjny z synchronizacją na
               żywo. Żadnych opłat, żadnych subskrypcji. Dane przechowywane w UE.
             </p>
-            <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
-              <Button asChild size="lg">
+            <div className="flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
+              <Button asChild>
                 <a href="#pobierz">
-                  <Smartphone className="size-5" />
+                  <Smartphone className="size-4" />
                   Pobierz aplikację
                 </a>
               </Button>
-              <Button asChild variant="outline" size="lg">
+              <Button asChild variant="outline">
                 <a href="#funkcje">
                   Poznaj funkcje
-                  <ChevronRight className="size-5" />
+                  <ChevronRight className="size-4" />
                 </a>
               </Button>
             </div>
@@ -125,37 +136,35 @@ function App(): JSX.Element {
         </section>
 
         {/* Features */}
-        <section id="funkcje" className="scroll-mt-20 px-4 py-20">
+        <section id="funkcje" className="scroll-mt-20 px-3 py-14 sm:py-20">
           <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-100px' }}
             transition={{ duration: 0.6 }}
             className="mx-auto max-w-5xl"
           >
-            <h2 className="mb-4 text-center text-3xl font-bold text-gray-900 sm:text-4xl">
+            <h2 className="mb-3 text-center text-2xl font-bold text-gray-900 sm:text-4xl">
               Wszystko, czego potrzebujesz
             </h2>
-            <p className="mx-auto mb-14 max-w-lg text-center text-gray-600">
+            <p className="mx-auto mb-10 max-w-lg text-center text-sm sm:text-base text-gray-600">
               Okresownik łączy w sobie prostotę użytkowania z zaawansowanymi funkcjami, które
               docenisz Ty i Twój partner.
             </p>
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {features.map((feature, i) => (
-                <motion.div
+            <div className="grid gap-3 sm:gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {features.map((feature) => (
+                <div
                   key={feature.title}
-                  initial={{ opacity: 0 }}
-                  whileInView={{ opacity: 1 }}
-                  viewport={{ once: true, margin: '-50px' }}
-                  transition={{ duration: 0.5, delay: i * 0.05 }}
-                  className="group rounded-2xl border border-pink-100 bg-white p-6 shadow-sm transition-all duration-300 hover:shadow-lg hover:border-pink-200 hover:-translate-y-1"
+                  className="rounded-2xl border border-pink-100 bg-white p-3 sm:p-6 shadow-sm"
                 >
-                  <div className="mb-4 flex size-12 items-center justify-center rounded-xl bg-pink-50 text-primary transition-colors group-hover:bg-primary group-hover:text-white">
-                    <feature.icon className="size-6" />
+                  <div className="mb-3 flex size-9 sm:size-12 items-center justify-center rounded-xl bg-pink-50 text-primary">
+                    <feature.icon className="size-4 sm:size-6" />
                   </div>
-                  <h3 className="mb-2 text-lg font-semibold text-gray-900">{feature.title}</h3>
-                  <p className="text-sm leading-relaxed text-gray-600">{feature.desc}</p>
-                </motion.div>
+                  <h3 className="mb-1.5 text-sm sm:text-lg font-semibold text-gray-900">
+                    {feature.title}
+                  </h3>
+                  <p className="text-xs sm:text-sm leading-relaxed text-gray-600">{feature.desc}</p>
+                </div>
               ))}
             </div>
           </motion.div>
@@ -164,7 +173,7 @@ function App(): JSX.Element {
         {/* Download */}
         <section
           id="pobierz"
-          className="scroll-mt-20 bg-gradient-to-b from-pink-50/50 to-white px-4 py-20"
+          className="scroll-mt-20 bg-gradient-to-b from-pink-50/50 to-white px-3 py-14 sm:py-20"
         >
           <motion.div
             initial={{ opacity: 0, y: 40 }}
@@ -173,19 +182,19 @@ function App(): JSX.Element {
             transition={{ duration: 0.6 }}
             className="mx-auto max-w-3xl text-center"
           >
-            <h2 className="mb-4 text-3xl font-bold text-gray-900 sm:text-4xl">
+            <h2 className="mb-3 text-2xl font-bold text-gray-900 sm:text-4xl">
               Pobierz Okresownik
             </h2>
-            <p className="mb-12 text-gray-600">
+            <p className="mb-8 text-sm sm:text-base text-gray-600">
               Aplikacja wkrótce trafi do sklepów Google Play i App Store. Póki co możesz pobrać
-              najnowszą wersję bezpośrednio z GitHub Releases.
+              najnowszą wersję bezpośrednio z GitHub Releases.
             </p>
-            <div className="mx-auto mb-14 grid max-w-md gap-6 sm:grid-cols-2">
-              <div className="rounded-2xl border-2 border-dashed border-pink-200 bg-white p-8 text-center transition-all duration-300 hover:border-primary hover:shadow-md">
-                <div className="mb-4 flex justify-center">
-                  <div className="flex size-20 items-center justify-center rounded-2xl bg-gray-100">
+            <div className="mx-auto mb-10 grid max-w-md gap-3 sm:gap-6 sm:grid-cols-2">
+              <div className="rounded-2xl border-2 border-dashed border-pink-200 bg-white p-3 sm:p-8 text-center transition-all duration-300 hover:border-primary hover:shadow-md">
+                <div className="mb-3 flex justify-center">
+                  <div className="flex size-14 sm:size-20 items-center justify-center rounded-2xl bg-gray-100">
                     <svg
-                      className="size-10 text-gray-400"
+                      className="size-6 sm:size-10 text-gray-400"
                       viewBox="0 0 24 24"
                       fill="currentColor"
                       aria-hidden="true"
@@ -194,17 +203,17 @@ function App(): JSX.Element {
                     </svg>
                   </div>
                 </div>
-                <h3 className="mb-2 text-lg font-semibold text-gray-900">Android</h3>
-                <p className="mb-4 text-sm text-gray-500">Wkrótce w Google Play</p>
-                <span className="inline-block rounded-full bg-amber-50 px-3 py-1 text-xs font-medium text-amber-700">
+                <h3 className="mb-1.5 text-sm sm:text-lg font-semibold text-gray-900">Android</h3>
+                <p className="mb-3 text-xs sm:text-sm text-gray-500">Wkrótce w Google Play</p>
+                <span className="inline-block rounded-full bg-amber-50 px-2 py-0.5 text-[10px] sm:text-xs font-medium text-amber-700">
                   Wczesny dostęp
                 </span>
               </div>
-              <div className="rounded-2xl border-2 border-dashed border-pink-200 bg-white p-8 text-center transition-all duration-300 hover:border-primary hover:shadow-md">
-                <div className="mb-4 flex justify-center">
-                  <div className="flex size-20 items-center justify-center rounded-2xl bg-gray-100">
+              <div className="rounded-2xl border-2 border-dashed border-pink-200 bg-white p-3 sm:p-8 text-center transition-all duration-300 hover:border-primary hover:shadow-md">
+                <div className="mb-3 flex justify-center">
+                  <div className="flex size-14 sm:size-20 items-center justify-center rounded-2xl bg-gray-100">
                     <svg
-                      className="size-10 text-gray-400"
+                      className="size-6 sm:size-10 text-gray-400"
                       viewBox="0 0 24 24"
                       fill="currentColor"
                       aria-hidden="true"
@@ -213,17 +222,33 @@ function App(): JSX.Element {
                     </svg>
                   </div>
                 </div>
-                <h3 className="mb-2 text-lg font-semibold text-gray-900">iOS</h3>
-                <p className="mb-4 text-sm text-gray-500">Wkrótce dostępne</p>
-                <span className="inline-block rounded-full bg-amber-50 px-3 py-1 text-xs font-medium text-amber-700">
+                <h3 className="mb-1.5 text-sm sm:text-lg font-semibold text-gray-900">iOS</h3>
+                <p className="mb-3 text-xs sm:text-sm text-gray-500">Wkrótce dostępne</p>
+                <span className="inline-block rounded-full bg-amber-50 px-2 py-0.5 text-[10px] sm:text-xs font-medium text-amber-700">
                   Wczesny dostęp
                 </span>
               </div>
             </div>
             <div className="mx-auto max-w-sm space-y-3">
-              <p className="text-sm text-gray-500">Pobierz bezpośrednio z GitHub Releases:</p>
-              <div className="flex gap-3">
-                <Button asChild className="flex-1">
+              <p className="text-xs sm:text-sm text-gray-500">
+                Lub pobierz bezpośrednio z GitHub Releases:
+              </p>
+              <div className="rounded-xl border border-amber-200 bg-amber-50 p-2.5 sm:p-4 text-left">
+                <div className="flex items-start gap-2 sm:gap-3">
+                  <FlaskConical className="mt-0.5 size-4 sm:size-5 shrink-0 text-amber-600" />
+                  <div className="space-y-0.5">
+                    <p className="text-xs sm:text-sm font-medium text-amber-800">
+                      Wydanie eksperymentalne
+                    </p>
+                    <p className="text-[10px] sm:text-xs leading-relaxed text-amber-700">
+                      Te buildy są generowane automatycznie i udostępniane dla wygody.{' '}
+                      <b>Mogą zawierać błędy i nie są przeznaczone do codziennego użytku</b>.
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div className="flex max-sm:flex-col items-center sm:justify-center gap-2 sm:gap-3">
+                <Button asChild>
                   <a
                     href="https://github.com/kguzek/okresownik/releases/latest/download/okresownik.apk"
                     target="_blank"
@@ -232,7 +257,7 @@ function App(): JSX.Element {
                     Pobierz APK
                   </a>
                 </Button>
-                <Button asChild variant="outline" className="flex-1">
+                <Button asChild variant="outline">
                   <a
                     href="https://github.com/kguzek/okresownik/releases/latest/download/okresownik.aab"
                     target="_blank"
@@ -247,7 +272,7 @@ function App(): JSX.Element {
         </section>
 
         {/* CTA */}
-        <section id="kontakt" className="scroll-mt-20 px-4 py-16 sm:py-20">
+        <section id="kontakt" className="scroll-mt-20 px-3 py-2 sm:py-6">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             whileInView={{ opacity: 1, scale: 1 }}
@@ -255,23 +280,24 @@ function App(): JSX.Element {
             transition={{ duration: 0.5 }}
             className="mx-auto max-w-2xl text-center"
           >
-            <div className="rounded-3xl bg-gradient-to-br from-primary to-primary-dark p-6 sm:p-10">
-              <Mail className="mx-auto mb-6 size-10 text-white/90" />
-              <h2 className="mb-4 text-2xl font-bold text-white sm:text-4xl">
+            <div className="rounded-3xl bg-linear-to-br from-primary to-primary-dark p-4 sm:p-10">
+              <Mail className="mx-auto mb-4 size-8 text-white/90" />
+              <h2 className="mb-3 text-xl font-bold text-white sm:text-4xl">
                 Chcesz przetestować wersję alpha?
               </h2>
-              <p className="mb-6 text-base text-white/80 sm:text-lg">
+              <p className="mb-4 text-sm text-white/80 sm:text-lg">
                 Jeżeli jesteś zainteresowana wczesnym dostępem do Okresownika, napisz do nas —
                 udostępnimy Ci wersję alpha do przetestowania.
               </p>
               <Button
                 asChild
-                size="lg"
-                className="bg-white text-primary hover:bg-white/90 hover:text-primary-dark px-4 sm:px-6"
+                className="bg-white text-primary hover:bg-white/90 hover:text-primary-dark text-sm max-sm:px-4"
               >
                 <a href="mailto:kontakt@okresownik.pl">
-                  <Mail className="size-5 shrink-0" />
-                  <span className="truncate">Napisz: kontakt@okresownik.pl</span>
+                  <Mail className="size-4 shrink-0" />
+                  <span className="truncate">
+                    <span className="max-sm:hidden">Napisz: </span>kontakt@okresownik.pl
+                  </span>
                 </a>
               </Button>
             </div>
@@ -279,7 +305,7 @@ function App(): JSX.Element {
         </section>
 
         {/* GitHub */}
-        <section className="px-4 pb-20">
+        <section className="px-3 pb-14 sm:pb-20">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -287,21 +313,24 @@ function App(): JSX.Element {
             transition={{ duration: 0.5 }}
             className="mx-auto max-w-2xl text-center"
           >
-            <div className="rounded-2xl border border-gray-200 bg-white p-10 shadow-sm">
-              <GitHubIcon className="mx-auto mb-4 size-10 text-gray-800" />
-              <h2 className="mb-3 text-2xl font-bold text-gray-900">Otwarte oprogramowanie</h2>
-              <p className="mb-6 text-gray-600">
+            <div className="rounded-2xl border border-gray-200 bg-white p-4 sm:p-10 shadow-sm">
+              <GitHubIcon className="mx-auto mb-3 size-8 sm:size-10 text-gray-800" />
+              <h2 className="mb-2 text-xl font-bold text-gray-900 sm:text-2xl">
+                Otwarte oprogramowanie
+              </h2>
+              <p className="mb-4 text-sm sm:text-base text-gray-600">
                 Kod źródłowy Okresownika jest w pełni jawny. Możesz go przeglądać, forkować,
                 zgłaszać błędy i proponować zmiany.
               </p>
-              <Button asChild variant="outline" size="lg">
+              <Button asChild variant="outline">
                 <a
                   href="https://github.com/kguzek/okresownik"
                   target="_blank"
                   rel="noopener noreferrer"
+                  className="max-sm:px-4 bg-white"
                 >
-                  <GitHubIcon className="size-5" />
-                  github.com/kguzek/okresownik
+                  <GitHubIcon className="size-4" />
+                  <span className="truncate">github.com/kguzek/okresownik</span>
                 </a>
               </Button>
             </div>
@@ -310,15 +339,15 @@ function App(): JSX.Element {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-pink-100 bg-white px-4 py-8">
-        <div className="mx-auto flex max-w-5xl flex-col items-center justify-between gap-4 text-sm text-gray-500 sm:flex-row">
+      <footer className="border-t border-pink-100 bg-white px-3 py-6">
+        <div className="mx-auto flex max-w-5xl flex-col items-center justify-between gap-3 text-xs sm:text-sm text-gray-500 sm:flex-row">
           <p>
             &copy; {new Date().getFullYear()}{' '}
             <a
-              href="https://guzek.uk"
+              href="https://www.guzek.uk"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-primary hover:underline"
+              className="text-primary underline decoration-transparent hover:decoration-primary transition-colors"
             >
               Konrad Guzek
             </a>
@@ -329,8 +358,9 @@ function App(): JSX.Element {
               href="https://github.com/kguzek/okresownik"
               target="_blank"
               rel="noopener noreferrer"
-              className="hover:text-primary transition-colors"
+              className="hover:text-primary transition-colors flex gap-1 items-center"
             >
+              <GitHubIcon className="size-4" />
               GitHub
             </a>
             <a href="mailto:kontakt@okresownik.pl" className="hover:text-primary transition-colors">

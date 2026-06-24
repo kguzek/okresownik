@@ -1,6 +1,7 @@
-import { Mail } from 'lucide-react'
-import { motion } from 'motion/react'
-import { Button } from '@/components/ui/button'
+import { Mail } from "lucide-react";
+import { motion } from "motion/react";
+
+import { Button } from "@/components/ui/button";
 
 export function Cta() {
   return (
@@ -12,7 +13,7 @@ export function Cta() {
         transition={{ duration: 0.5 }}
         className="mx-auto max-w-2xl text-center"
       >
-        <div className="rounded-3xl bg-linear-to-br from-primary to-primary-dark p-4 sm:p-10">
+        <div className="from-primary to-primary-dark rounded-3xl bg-linear-to-br p-4 sm:p-10">
           <Mail className="mx-auto mb-4 size-8 text-white/90" />
           <h2 className="mb-3 text-xl font-bold text-white sm:text-4xl">
             Chcesz przetestować wersję alpha?
@@ -23,7 +24,7 @@ export function Cta() {
           </p>
           <Button
             asChild
-            className="bg-white text-primary hover:bg-white/90 hover:text-primary-dark text-sm max-sm:px-4"
+            className="text-primary hover:text-primary-dark bg-white text-sm hover:bg-white/90 max-sm:px-4"
           >
             <a href="mailto:kontakt@okresownik.pl">
               <Mail className="size-4 shrink-0" />
@@ -35,5 +36,5 @@ export function Cta() {
         </div>
       </motion.div>
     </section>
-  )
+  );
 }

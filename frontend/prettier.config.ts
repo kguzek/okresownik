@@ -1,0 +1,20 @@
+export default {
+  semi: true,
+  singleQuote: false,
+  trailingComma: "all",
+  tabWidth: 2,
+  printWidth: 100,
+  plugins: ["@ianvs/prettier-plugin-sort-imports", "prettier-plugin-tailwindcss"],
+  importOrder: [
+    "<TYPES>",
+    "^(react)(/.+)?$",
+    "<THIRD_PARTY_MODULES>",
+    "",
+    "<TYPES>^(@/)",
+    "^@/(.*)$",
+    "",
+    "<TYPES>^[./]",
+    "^[./]",
+  ],
+  importOrderTypeScriptVersion: "6.0.3",
+};

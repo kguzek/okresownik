@@ -1,15 +1,16 @@
-import type { JSX } from 'react'
-import { Cta } from '@/components/sections/cta'
-import { Download } from '@/components/sections/download'
-import { Features } from '@/components/sections/features'
-import { Footer } from '@/components/sections/footer'
-import { GitHubSection } from '@/components/sections/github-section'
-import { Header } from '@/components/sections/header'
-import { Hero } from '@/components/sections/hero'
+import type { JSX } from "react";
+
+import { Cta } from "@/components/sections/cta";
+import { Download } from "@/components/sections/download";
+import { Features } from "@/components/sections/features";
+import { Footer } from "@/components/sections/footer";
+import { GitHubSection } from "@/components/sections/github-section";
+import { Header } from "@/components/sections/header";
+import { Hero } from "@/components/sections/hero";
 
 function App(): JSX.Element {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-surface via-white to-white">
+    <div className="from-surface min-h-screen bg-gradient-to-b via-white to-white">
       <Header />
       <main>
         <Hero />
@@ -20,7 +21,7 @@ function App(): JSX.Element {
       </main>
       <Footer />
     </div>
-  )
+  );
 }
 
-export default App
+export default App;

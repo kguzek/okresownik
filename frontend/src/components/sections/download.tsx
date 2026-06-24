@@ -1,6 +1,7 @@
-import { FlaskConical } from 'lucide-react'
-import { motion } from 'motion/react'
-import { Button } from '@/components/ui/button'
+import { FlaskConical } from "lucide-react";
+import { motion } from "motion/react";
+
+import { Button } from "@/components/ui/button";
 
 export function Download() {
   return (
@@ -16,16 +17,16 @@ export function Download() {
         className="mx-auto max-w-3xl text-center"
       >
         <h2 className="mb-3 text-2xl font-bold text-gray-900 sm:text-4xl">Pobierz Okresownik</h2>
-        <p className="mb-8 text-sm sm:text-base text-gray-600">
+        <p className="mb-8 text-sm text-gray-600 sm:text-base">
           Aplikacja wkrótce trafi do sklepów Google Play i App Store. Póki co możesz pobrać
           najnowszą wersję bezpośrednio z GitHub Releases.
         </p>
-        <div className="mx-auto mb-10 grid max-w-md gap-3 sm:gap-6 sm:grid-cols-2">
-          <div className="rounded-2xl border-2 border-dashed border-pink-200 bg-white p-3 sm:p-8 text-center transition-all duration-300 hover:border-primary hover:shadow-md">
+        <div className="mx-auto mb-10 grid max-w-md gap-3 sm:grid-cols-2 sm:gap-6">
+          <div className="hover:border-primary rounded-2xl border-2 border-dashed border-pink-200 bg-white p-3 text-center transition-all duration-300 hover:shadow-md sm:p-8">
             <div className="mb-3 flex justify-center">
-              <div className="flex size-14 sm:size-20 items-center justify-center rounded-2xl bg-gray-100">
+              <div className="flex size-14 items-center justify-center rounded-2xl bg-gray-100 sm:size-20">
                 <svg
-                  className="size-6 sm:size-10 text-gray-400"
+                  className="size-6 text-gray-400 sm:size-10"
                   viewBox="0 0 24 24"
                   fill="currentColor"
                   aria-hidden="true"
@@ -34,17 +35,17 @@ export function Download() {
                 </svg>
               </div>
             </div>
-            <h3 className="mb-1.5 text-sm sm:text-lg font-semibold text-gray-900">Android</h3>
-            <p className="mb-3 text-xs sm:text-sm text-gray-500">Wkrótce w Google Play</p>
-            <span className="inline-block rounded-full bg-amber-50 px-2 py-0.5 text-[10px] sm:text-xs font-medium text-amber-700">
+            <h3 className="mb-1.5 text-sm font-semibold text-gray-900 sm:text-lg">Android</h3>
+            <p className="mb-3 text-xs text-gray-500 sm:text-sm">Wkrótce w Google Play</p>
+            <span className="inline-block rounded-full bg-amber-50 px-2 py-0.5 text-[10px] font-medium text-amber-700 sm:text-xs">
               Wczesny dostęp
             </span>
           </div>
-          <div className="rounded-2xl border-2 border-dashed border-pink-200 bg-white p-3 sm:p-8 text-center transition-all duration-300 hover:border-primary hover:shadow-md">
+          <div className="hover:border-primary rounded-2xl border-2 border-dashed border-pink-200 bg-white p-3 text-center transition-all duration-300 hover:shadow-md sm:p-8">
             <div className="mb-3 flex justify-center">
-              <div className="flex size-14 sm:size-20 items-center justify-center rounded-2xl bg-gray-100">
+              <div className="flex size-14 items-center justify-center rounded-2xl bg-gray-100 sm:size-20">
                 <svg
-                  className="size-6 sm:size-10 text-gray-400"
+                  className="size-6 text-gray-400 sm:size-10"
                   viewBox="0 0 24 24"
                   fill="currentColor"
                   aria-hidden="true"
@@ -53,32 +54,32 @@ export function Download() {
                 </svg>
               </div>
             </div>
-            <h3 className="mb-1.5 text-sm sm:text-lg font-semibold text-gray-900">iOS</h3>
-            <p className="mb-3 text-xs sm:text-sm text-gray-500">Wkrótce dostępne</p>
-            <span className="inline-block rounded-full bg-amber-50 px-2 py-0.5 text-[10px] sm:text-xs font-medium text-amber-700">
+            <h3 className="mb-1.5 text-sm font-semibold text-gray-900 sm:text-lg">iOS</h3>
+            <p className="mb-3 text-xs text-gray-500 sm:text-sm">Wkrótce dostępne</p>
+            <span className="inline-block rounded-full bg-amber-50 px-2 py-0.5 text-[10px] font-medium text-amber-700 sm:text-xs">
               Wczesny dostęp
             </span>
           </div>
         </div>
         <div className="mx-auto max-w-sm space-y-3">
-          <p className="text-xs sm:text-sm text-gray-500">
+          <p className="text-xs text-gray-500 sm:text-sm">
             Lub pobierz bezpośrednio z GitHub Releases:
           </p>
-          <div className="rounded-xl border border-amber-200 bg-amber-50 p-2.5 sm:p-4 text-left">
+          <div className="rounded-xl border border-amber-200 bg-amber-50 p-2.5 text-left sm:p-4">
             <div className="flex items-start gap-2 sm:gap-3">
-              <FlaskConical className="mt-0.5 size-4 sm:size-5 shrink-0 text-amber-600" />
+              <FlaskConical className="mt-0.5 size-4 shrink-0 text-amber-600 sm:size-5" />
               <div className="space-y-0.5">
-                <p className="text-xs sm:text-sm font-medium text-amber-800">
+                <p className="text-xs font-medium text-amber-800 sm:text-sm">
                   Wydanie eksperymentalne
                 </p>
-                <p className="text-[10px] sm:text-xs leading-relaxed text-amber-700">
-                  Te buildy są generowane automatycznie i udostępniane dla wygody.{' '}
+                <p className="text-[10px] leading-relaxed text-amber-700 sm:text-xs">
+                  Te buildy są generowane automatycznie i udostępniane dla wygody.{" "}
                   <b>Mogą zawierać błędy i nie są przeznaczone do codziennego użytku</b>.
                 </p>
               </div>
             </div>
           </div>
-          <div className="flex max-sm:flex-col items-center sm:justify-center gap-2 sm:gap-3">
+          <div className="flex items-center gap-2 max-sm:flex-col sm:justify-center sm:gap-3">
             <Button asChild>
               <a
                 href="https://github.com/kguzek/okresownik/releases/latest/download/okresownik.apk"
@@ -101,5 +102,5 @@ export function Download() {
         </div>
       </motion.div>
     </section>
-  )
+  );
 }

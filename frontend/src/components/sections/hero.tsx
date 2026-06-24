@@ -1,6 +1,7 @@
-import { ChevronRight, Heart, Smartphone } from 'lucide-react'
-import { motion } from 'motion/react'
-import { Button } from '@/components/ui/button'
+import { ChevronRight, Heart, Smartphone } from "lucide-react";
+import { motion } from "motion/react";
+
+import { Button } from "@/components/ui/button";
 
 export function Hero() {
   return (
@@ -14,17 +15,17 @@ export function Hero() {
         transition={{ duration: 0.7, delay: 0.2 }}
         className="mx-auto max-w-3xl text-center"
       >
-        <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-pink-100 px-3 py-1 text-xs sm:text-sm text-primary">
-          <Heart className="size-3.5 fill-primary" />
+        <div className="text-primary mb-4 inline-flex items-center gap-2 rounded-full bg-pink-100 px-3 py-1 text-xs sm:text-sm">
+          <Heart className="fill-primary size-3.5" />
           Otwarte oprogramowanie
         </div>
         <h1 className="mb-4 text-3xl font-bold tracking-tight text-gray-900 sm:text-5xl md:text-6xl">
-          Śledź swój cykl{' '}
-          <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+          Śledź swój cykl{" "}
+          <span className="from-primary to-secondary bg-gradient-to-r bg-clip-text text-transparent">
             z partnerem
           </span>
         </h1>
-        <p className="mx-auto mb-6 max-w-xl text-sm sm:text-base md:text-lg leading-relaxed text-gray-600">
+        <p className="mx-auto mb-6 max-w-xl text-sm leading-relaxed text-gray-600 sm:text-base md:text-lg">
           Okresownik to darmowy, otwartoźródłowy kalendarzyk menstruacyjny z synchronizacją na żywo.
           Żadnych opłat, żadnych subskrypcji. Dane przechowywane w UE.
         </p>
@@ -44,5 +45,5 @@ export function Hero() {
         </div>
       </motion.div>
     </section>
-  )
+  );
 }

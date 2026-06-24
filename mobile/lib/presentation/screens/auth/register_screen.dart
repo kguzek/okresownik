@@ -52,10 +52,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Icon(
-                    Icons.pregnant_woman,
-                    size: 80,
-                    color: Theme.of(context).colorScheme.primary,
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(20),
+                    child: Image.asset(
+                      'assets/images/logo.png',
+                      width: 96,
+                      height: 96,
+                    ),
                   ),
                   const SizedBox(height: 16),
                   Text(

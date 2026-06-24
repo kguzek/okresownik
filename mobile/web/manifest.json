@@ -1,6 +1,6 @@
 {
-    "name": "okresownik",
-    "short_name": "okresownik",
+    "name": "Okresownik",
+    "short_name": "Okresownik",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

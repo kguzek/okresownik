@@ -3,11 +3,14 @@ import 'package:flutter/material.dart';
 class AppTheme {
   AppTheme._();
 
+  // Frontend color palette
   static const Color primaryPink = Color(0xFFE91E63);
+  static const Color primaryDark = Color(0xFFC2185B);
+  static const Color surface = Color(0xFFFDF2F8);
   static const Color lightPink = Color(0xFFFCE4EC);
   static const Color fertileGreen = Color(0xFF4CAF50);
   static const Color fertileLight = Color(0xFFE8F5E9);
-  static const Color intercourseAmber = Color(0xFFFFA000);
+  static const Color intercourseAmber = Color(0xFFFF9800);
   static const Color periodRed = Color(0xFFD32F2F);
   static const Color predictionBlue = Color(0xFF1976D2);
 
@@ -16,6 +19,7 @@ class AppTheme {
       useMaterial3: true,
       colorSchemeSeed: primaryPink,
       brightness: Brightness.light,
+      scaffoldBackgroundColor: surface,
       appBarTheme: const AppBarTheme(
         centerTitle: true,
         elevation: 0,

@@ -61,7 +61,29 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get today => 'Today';
   @override
-  String flowText(String flow) => 'Flow: $flow';
+  String flowText(String flow) {
+    switch (flow) {
+      case 'spotting':
+        return 'Spotting';
+      case 'light':
+        return 'Light';
+      case 'medium':
+        return 'Medium';
+      case 'heavy':
+        return 'Heavy';
+      default:
+        return flow;
+    }
+  }
+
+  @override
+  String get flowSpotting => 'Spotting';
+  @override
+  String get flowLight => 'Light';
+  @override
+  String get flowMedium => 'Medium';
+  @override
+  String get flowHeavy => 'Heavy';
   @override
   String get intercourseLogged => 'Intercourse logged';
   @override

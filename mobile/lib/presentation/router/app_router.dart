@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -54,15 +56,15 @@ GoRouter createRouter(AuthCubit authCubit) {
 }
 
 class _AuthListener extends ChangeNotifier {
-  final AuthCubit _cubit;
+  StreamSubscription? _subscription;
 
-  _AuthListener(this._cubit) {
-    _cubit.stream.listen((_) => notifyListeners());
+  _AuthListener(AuthCubit cubit) {
+    _subscription = cubit.stream.listen((_) => notifyListeners());
   }
 
   @override
   void dispose() {
-    _cubit.close();
+    _subscription?.cancel();
     super.dispose();
   }
 }

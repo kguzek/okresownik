@@ -13,6 +13,7 @@ class CalendarWidget extends StatelessWidget {
   final PredictionModel? prediction;
   final ValueChanged<DateTime> onDaySelected;
   final ValueChanged<DateTime> onPageChanged;
+  final VoidCallback? onHeaderTapped;
 
   const CalendarWidget({
     super.key,
@@ -22,6 +23,7 @@ class CalendarWidget extends StatelessWidget {
     this.prediction,
     required this.onDaySelected,
     required this.onPageChanged,
+    this.onHeaderTapped,
   });
 
   Map<DateTime, CycleDayModel> get _dayMap {
@@ -35,6 +37,7 @@ class CalendarWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return TableCalendar(
       firstDay: DateTime.utc(2025, 1, 1),
       lastDay: DateTime.utc(2028, 12, 31),
@@ -44,23 +47,42 @@ class CalendarWidget extends StatelessWidget {
         onDaySelected(selected);
       },
       onPageChanged: onPageChanged,
+      onHeaderTapped: (_) => onHeaderTapped?.call(),
       calendarStyle: CalendarStyle(
         todayDecoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
+          color: theme.colorScheme.primary.withValues(alpha: 0.15),
           shape: BoxShape.circle,
         ),
         selectedDecoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.primary,
+          color: theme.colorScheme.primary,
           shape: BoxShape.circle,
         ),
         todayTextStyle: TextStyle(
           fontWeight: FontWeight.bold,
-          color: Theme.of(context).colorScheme.primary,
+          color: theme.colorScheme.primary,
+        ),
+        defaultTextStyle: TextStyle(color: theme.colorScheme.onSurface),
+        weekendTextStyle: TextStyle(color: theme.colorScheme.onSurfaceVariant),
+        outsideTextStyle: TextStyle(
+          color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
         ),
       ),
-      headerStyle: const HeaderStyle(
+      headerStyle: HeaderStyle(
         formatButtonVisible: false,
         titleCentered: true,
+        titleTextStyle: TextStyle(
+          fontWeight: FontWeight.w600,
+          fontSize: 16,
+          color: theme.colorScheme.onSurface,
+        ),
+        leftChevronIcon: Icon(
+          Icons.chevron_left,
+          color: theme.colorScheme.primary,
+        ),
+        rightChevronIcon: Icon(
+          Icons.chevron_right,
+          color: theme.colorScheme.primary,
+        ),
       ),
       calendarBuilders: CalendarBuilders(
         markerBuilder: (context, date, events) {

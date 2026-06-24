@@ -61,7 +61,29 @@ class AppLocalizationsPl extends AppLocalizations {
   @override
   String get today => 'Dziś';
   @override
-  String flowText(String flow) => 'Przepływ: $flow';
+  String flowText(String flow) {
+    switch (flow) {
+      case 'spotting':
+        return 'Plamienie';
+      case 'light':
+        return 'Lekki';
+      case 'medium':
+        return 'Średni';
+      case 'heavy':
+        return 'Obfity';
+      default:
+        return flow;
+    }
+  }
+
+  @override
+  String get flowSpotting => 'Plamienie';
+  @override
+  String get flowLight => 'Lekki';
+  @override
+  String get flowMedium => 'Średni';
+  @override
+  String get flowHeavy => 'Obfity';
   @override
   String get intercourseLogged => 'Zaznaczono intymność';
   @override

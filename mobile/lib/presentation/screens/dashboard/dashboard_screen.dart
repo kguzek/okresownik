@@ -23,7 +23,7 @@ class DashboardScreen extends StatefulWidget {
 
 class _DashboardScreenState extends State<DashboardScreen> {
   DateTime _focusedDay = DateTime.now();
-  DateTime? _selectedDay;
+  DateTime _selectedDay = DateTime.now();
 
   @override
   void initState() {
@@ -50,102 +50,143 @@ class _DashboardScreenState extends State<DashboardScreen> {
     context.read<CycleCubit>().selectDay(day);
   }
 
-  void _showDayDetails(CycleDayModel? dayData) {
-    if (_selectedDay == null) return;
-
-    final dateStr = DateFormat('yyyy-MM-dd').format(_selectedDay!);
+  void _showDayDetails(CycleDayModel? dayData, DateTime date) {
+    final dateStr = DateFormat('yyyy-MM-dd').format(date);
 
     showModalBottomSheet(
       context: context,
-      builder: (context) => _DayDetailsSheet(
-        date: _selectedDay!,
+      isScrollControlled: true,
+      builder: (sheetContext) => _DayDetailsSheet(
+        date: date,
         dayData: dayData,
-        onMarkPeriod: () {
-          context.read<CycleCubit>().markPeriodDay(date: dateStr);
-          Navigator.pop(context);
+        onMarkPeriod: (String flow) {
+          context.read<CycleCubit>().markPeriodDay(date: dateStr, flow: flow);
+          Navigator.pop(sheetContext);
         },
         onMarkIntercourse: () {
           context.read<CycleCubit>().markIntercourseDay(date: dateStr);
-          Navigator.pop(context);
+          Navigator.pop(sheetContext);
         },
         onClearDay: () {
           context.read<CycleCubit>().clearDay(dateStr);
-          Navigator.pop(context);
+          Navigator.pop(sheetContext);
         },
       ),
     );
   }
 
+  void _navigateTo(String location) {
+    if (location == '/settings' ||
+        location == '/partner/share' ||
+        location == '/partner/view') {
+      context.push(location);
+    } else {
+      context.go(location);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final t = AppLocalizations.of(context);
+    final isToday = isSameDay(_selectedDay, DateTime.now());
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(t.appTitle),
-        actions: [
-          const _PartnerStatusIcon(),
-          PopupMenuButton<String>(
-            onSelected: (value) {
-              switch (value) {
-                case 'settings':
-                  context.go('/settings');
-                case 'share':
-                  context.go('/partner/share');
-                case 'view':
-                  context.go('/partner/view');
-                case 'logout':
-                  context.read<AuthCubit>().logout();
-              }
-            },
-            itemBuilder: (context) => [
-              PopupMenuItem(value: 'settings', child: Text(t.settings)),
-              PopupMenuItem(value: 'share', child: Text(t.shareWithPartner)),
-              PopupMenuItem(value: 'view', child: Text(t.viewPartnerCalendar)),
-              const PopupMenuDivider(),
-              PopupMenuItem(value: 'logout', child: Text(t.logout)),
-            ],
+    return BlocListener<CycleCubit, CycleState>(
+      listenWhen: (prev, curr) =>
+          curr.status == CycleStatus.error && curr.error != null,
+      listener: (context, state) {
+        if (state.error != null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.error!),
+              backgroundColor: AppTheme.periodRed,
+            ),
+          );
+          context.read<CycleCubit>().clearError();
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(
+            t.appTitle,
+            style: const TextStyle(fontWeight: FontWeight.w600),
           ),
-        ],
-      ),
-      body: Column(
-        children: [
-          BlocBuilder<CycleCubit, CycleState>(
-            builder: (context, state) {
-              return CalendarWidget(
-                focusedDay: _focusedDay,
-                selectedDay: _selectedDay,
-                cycleDays: state.days,
-                prediction: state.prediction,
-                onDaySelected: _onDaySelected,
-                onPageChanged: (day) => setState(() => _focusedDay = day),
-              );
-            },
-          ),
-          const SizedBox(height: 8),
-          _PredictionSummaryCard(),
-          const SizedBox(height: 8),
-          _LegendRow(),
-          const Spacer(),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-            child: SizedBox(
-              width: double.infinity,
-              height: 48,
-              child: ElevatedButton.icon(
-                onPressed: () => _showDayDetails(
-                  context.read<CycleCubit>().state.dayForDate(_selectedDay ?? DateTime.now()),
-                ),
-                icon: const Icon(Icons.edit),
-                label: Text(
-                  _selectedDay != null
-                      ? t.logDate(DateFormat('MMM d').format(_selectedDay!))
-                      : t.logToday,
+          actions: [
+            const _PartnerStatusIcon(),
+            PopupMenuButton<String>(
+              onSelected: (value) {
+                switch (value) {
+                  case 'settings':
+                    _navigateTo('/settings');
+                  case 'share':
+                    _navigateTo('/partner/share');
+                  case 'view':
+                    _navigateTo('/partner/view');
+                  case 'logout':
+                    context.read<AuthCubit>().logout();
+                }
+              },
+              itemBuilder: (context) => [
+                PopupMenuItem(value: 'settings', child: Text(t.settings)),
+                PopupMenuItem(value: 'share', child: Text(t.shareWithPartner)),
+                PopupMenuItem(value: 'view', child: Text(t.viewPartnerCalendar)),
+                const PopupMenuDivider(),
+                PopupMenuItem(value: 'logout', child: Text(t.logout)),
+              ],
+            ),
+          ],
+        ),
+        body: Column(
+          children: [
+            BlocBuilder<CycleCubit, CycleState>(
+              builder: (context, state) {
+                return CalendarWidget(
+                  focusedDay: _focusedDay,
+                  selectedDay: _selectedDay,
+                  cycleDays: state.days,
+                  prediction: state.prediction,
+                  onDaySelected: _onDaySelected,
+                  onPageChanged: (day) => setState(() => _focusedDay = day),
+                  onHeaderTapped: () {
+                    setState(() {
+                      _focusedDay = DateTime.now();
+                      _selectedDay = DateTime.now();
+                    });
+                    context.read<CycleCubit>().selectDay(DateTime.now());
+                  },
+                );
+              },
+            ),
+            const SizedBox(height: 8),
+            _PredictionSummaryCard(),
+            const SizedBox(height: 8),
+            _LegendRow(),
+            const Spacer(),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
+              child: SizedBox(
+                width: double.infinity,
+                height: 52,
+                child: ElevatedButton.icon(
+                  onPressed: () => _showDayDetails(
+                    context
+                        .read<CycleCubit>()
+                        .state
+                        .dayForDate(_selectedDay),
+                    _selectedDay,
+                  ),
+                  icon: Icon(isToday ? Icons.edit_calendar : Icons.edit),
+                  label: Text(
+                    isToday ? t.logToday : t.logDate(DateFormat('MMM d').format(_selectedDay)),
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -165,13 +206,23 @@ class _PredictionSummaryCard extends StatelessWidget {
         final cycleDay = prediction.cycleDay;
 
         return Card(
+          margin: const EdgeInsets.symmetric(horizontal: 16),
           child: Padding(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
             child: Row(
               children: [
-                Icon(
-                  Icons.trending_up,
-                  color: Theme.of(context).colorScheme.primary,
+                Container(
+                  width: 36,
+                  height: 36,
+                  decoration: BoxDecoration(
+                    color: AppTheme.primaryLight,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Icon(
+                    Icons.trending_up,
+                    color: AppTheme.primary,
+                    size: 20,
+                  ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
@@ -182,12 +233,15 @@ class _PredictionSummaryCard extends StatelessWidget {
                         t.cycleDayText(cycleDay),
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                               fontWeight: FontWeight.w600,
+                              color: AppTheme.onSurface,
                             ),
                       ),
+                      const SizedBox(height: 2),
                       Text(
                         t.nextPeriodExpectedText(nextPeriod),
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: Colors.grey[600],
+                              color: AppTheme.onSurfaceVariant,
+                              fontSize: 13,
                             ),
                       ),
                     ],
@@ -213,9 +267,9 @@ class _LegendRow extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           _LegendDot(color: AppTheme.periodRed, label: t.periodLabel),
-          const SizedBox(width: 16),
+          const SizedBox(width: 20),
           _LegendDot(color: AppTheme.fertileGreen, label: t.fertileLabel),
-          const SizedBox(width: 16),
+          const SizedBox(width: 20),
           _LegendDot(color: AppTheme.intercourseAmber, label: t.intimacyLabel),
         ],
       ),
@@ -235,15 +289,20 @@ class _LegendDot extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Container(
-          width: 10,
-          height: 10,
+          width: 8,
+          height: 8,
           decoration: BoxDecoration(
             color: color,
             shape: BoxShape.circle,
           ),
         ),
-        const SizedBox(width: 4),
-        Text(label, style: Theme.of(context).textTheme.bodySmall),
+        const SizedBox(width: 6),
+        Text(
+          label,
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: AppTheme.onSurfaceVariant,
+              ),
+        ),
       ],
     );
   }
@@ -260,8 +319,9 @@ class _PartnerStatusIcon extends StatelessWidget {
         return Padding(
           padding: const EdgeInsets.only(right: 4),
           child: Icon(
-            isLinked ? Icons.people : Icons.person,
-            color: isLinked ? AppTheme.fertileGreen : Colors.grey,
+            isLinked ? Icons.people : Icons.person_outline,
+            color: isLinked ? AppTheme.primary : AppTheme.onSurfaceVariant,
+            size: 22,
           ),
         );
       },
@@ -269,10 +329,10 @@ class _PartnerStatusIcon extends StatelessWidget {
   }
 }
 
-class _DayDetailsSheet extends StatelessWidget {
+class _DayDetailsSheet extends StatefulWidget {
   final DateTime date;
   final CycleDayModel? dayData;
-  final VoidCallback onMarkPeriod;
+  final ValueChanged<String> onMarkPeriod;
   final VoidCallback onMarkIntercourse;
   final VoidCallback onClearDay;
 
@@ -285,104 +345,268 @@ class _DayDetailsSheet extends StatelessWidget {
   });
 
   @override
+  State<_DayDetailsSheet> createState() => _DayDetailsSheetState();
+}
+
+class _DayDetailsSheetState extends State<_DayDetailsSheet> {
+  String _selectedFlow = 'light';
+
+  @override
   Widget build(BuildContext context) {
     final t = AppLocalizations.of(context);
-    final dateStr = DateFormat('EEEE, MMMM d, yyyy').format(date);
-    final isToday = isSameDay(date, DateTime.now());
+    final dateStr = DateFormat('EEEE, MMMM d, yyyy').format(widget.date);
+    final isToday = isSameDay(widget.date, DateTime.now());
 
     return Padding(
-      padding: const EdgeInsets.all(24),
+      padding: EdgeInsets.only(
+        left: 24,
+        right: 24,
+        top: 12,
+        bottom: MediaQuery.of(context).viewInsets.bottom + 24,
+      ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Center(
             child: Container(
-              width: 40,
+              width: 36,
               height: 4,
               decoration: BoxDecoration(
-                color: Colors.grey[300],
+                color: AppTheme.divider,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 20),
           Text(
             dateStr,
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.w600,
+                  color: AppTheme.onSurface,
                 ),
           ),
           if (isToday)
-            Text(
-              t.today,
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
+            Padding(
+              padding: const EdgeInsets.only(top: 4),
+              child: Text(
+                t.today,
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: AppTheme.primary,
+                      fontWeight: FontWeight.w600,
+                    ),
+              ),
             ),
           const SizedBox(height: 24),
-          if (dayData != null) ...[
-            if (dayData!.isPeriod)
+          if (widget.dayData != null) ...[
+            if (widget.dayData!.isPeriod)
               _InfoChip(
                 icon: Icons.water_drop,
                 label: t.periodLabel,
                 color: AppTheme.periodRed,
-                detail: dayData!.flow.isNotEmpty ? t.flowText(dayData!.flow) : null,
+                detail: widget.dayData!.flow.isNotEmpty
+                    ? t.flowText(widget.dayData!.flow)
+                    : null,
               ),
-            if (dayData!.isIntercourse)
+            if (widget.dayData!.isIntercourse)
               _InfoChip(
                 icon: Icons.favorite,
-                label: t.intercourseLogged,
+                label: t.intimacyLabel,
                 color: AppTheme.intercourseAmber,
               ),
-            if (dayData!.notes.isNotEmpty)
+            if (widget.dayData!.notes.isNotEmpty)
               Padding(
                 padding: const EdgeInsets.only(top: 8),
                 child: Text(
-                  dayData!.notes,
-                  style: Theme.of(context).textTheme.bodyMedium,
+                  widget.dayData!.notes,
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: AppTheme.onSurfaceVariant,
+                      ),
                 ),
               ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 20),
             OutlinedButton.icon(
-              onPressed: onClearDay,
-              icon: const Icon(Icons.delete_outline),
+              onPressed: widget.onClearDay,
+              icon: const Icon(Icons.delete_outline, size: 20),
               label: Text(t.clearDayData),
-              style: OutlinedButton.styleFrom(foregroundColor: Colors.red),
+              style: OutlinedButton.styleFrom(
+                foregroundColor: AppTheme.periodRed,
+                side: const BorderSide(color: AppTheme.periodRed),
+              ),
             ),
           ] else ...[
             Row(
               children: [
                 Expanded(
                   child: ElevatedButton.icon(
-                    onPressed: onMarkPeriod,
-                    icon: const Icon(Icons.water_drop),
-                    label: Text(t.periodLabel),
+                    onPressed: () {
+                      _showFlowSelector(context);
+                    },
+                    icon: const Icon(Icons.water_drop, size: 20),
+                    label: Text(
+                      t.periodLabel,
+                      style: const TextStyle(fontWeight: FontWeight.w600),
+                    ),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppTheme.lightPink,
+                      backgroundColor: AppTheme.periodRed.withValues(alpha: 0.1),
                       foregroundColor: AppTheme.periodRed,
+                      elevation: 0,
+                      padding: const EdgeInsets.symmetric(vertical: 14),
                     ),
                   ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: ElevatedButton.icon(
-                    onPressed: onMarkIntercourse,
-                    icon: const Icon(Icons.favorite),
-                    label: Text(t.intimacyLabel),
+                    onPressed: widget.onMarkIntercourse,
+                    icon: const Icon(Icons.favorite, size: 20),
+                    label: Text(
+                      t.intimacyLabel,
+                      style: const TextStyle(fontWeight: FontWeight.w600),
+                    ),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppTheme.fertileLight,
+                      backgroundColor: AppTheme.intercourseAmber.withValues(alpha: 0.1),
                       foregroundColor: AppTheme.intercourseAmber,
+                      elevation: 0,
+                      padding: const EdgeInsets.symmetric(vertical: 14),
                     ),
                   ),
                 ),
               ],
             ),
           ],
-          const SizedBox(height: 16),
         ],
+      ),
+    );
+  }
+
+  void _showFlowSelector(BuildContext context) {
+    final t = AppLocalizations.of(context);
+
+    showModalBottomSheet(
+      context: context,
+      builder: (ctx) => Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Center(
+              child: Container(
+                width: 36,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: AppTheme.divider,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
+            Text(
+              t.periodLabel,
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: AppTheme.onSurface,
+                  ),
+            ),
+            const SizedBox(height: 20),
+            _FlowChip(
+              label: t.flowSpotting,
+              isSelected: _selectedFlow == 'spotting',
+              onTap: () {
+                setState(() => _selectedFlow = 'spotting');
+                Navigator.pop(ctx);
+                widget.onMarkPeriod('spotting');
+              },
+            ),
+            const SizedBox(height: 8),
+            _FlowChip(
+              label: t.flowLight,
+              isSelected: _selectedFlow == 'light',
+              onTap: () {
+                setState(() => _selectedFlow = 'light');
+                Navigator.pop(ctx);
+                widget.onMarkPeriod('light');
+              },
+            ),
+            const SizedBox(height: 8),
+            _FlowChip(
+              label: t.flowMedium,
+              isSelected: _selectedFlow == 'medium',
+              onTap: () {
+                setState(() => _selectedFlow = 'medium');
+                Navigator.pop(ctx);
+                widget.onMarkPeriod('medium');
+              },
+            ),
+            const SizedBox(height: 8),
+            _FlowChip(
+              label: t.flowHeavy,
+              isSelected: _selectedFlow == 'heavy',
+              onTap: () {
+                setState(() => _selectedFlow = 'heavy');
+                Navigator.pop(ctx);
+                widget.onMarkPeriod('heavy');
+              },
+            ),
+            const SizedBox(height: 12),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _FlowChip extends StatelessWidget {
+  final String label;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  const _FlowChip({
+    required this.label,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: isSelected
+          ? AppTheme.periodRed.withValues(alpha: 0.1)
+          : Colors.white,
+      borderRadius: BorderRadius.circular(12),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(12),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: isSelected ? AppTheme.periodRed : AppTheme.divider,
+            ),
+          ),
+          child: Row(
+            children: [
+              Icon(
+                Icons.water_drop,
+                color: isSelected ? AppTheme.periodRed : AppTheme.onSurfaceVariant,
+                size: 20,
+              ),
+              const SizedBox(width: 12),
+              Text(
+                label,
+                style: TextStyle(
+                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                  color: isSelected ? AppTheme.periodRed : AppTheme.onSurface,
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -407,14 +631,38 @@ class _InfoChip extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 8),
       child: Row(
         children: [
-          Icon(icon, color: color, size: 20),
-          const SizedBox(width: 8),
-          Text(label),
+          Container(
+            width: 32,
+            height: 32,
+            decoration: BoxDecoration(
+              color: color.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(icon, color: color, size: 18),
+          ),
+          const SizedBox(width: 12),
+          Text(
+            label,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: AppTheme.onSurface,
+                ),
+          ),
           if (detail != null) ...[
             const SizedBox(width: 8),
-            Text(
-              detail!,
-              style: TextStyle(color: Colors.grey[600], fontSize: 12),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+              decoration: BoxDecoration(
+                color: color.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(6),
+              ),
+              child: Text(
+                detail!,
+                style: TextStyle(
+                  color: color,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
             ),
           ],
         ],

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../core/theme/app_theme.dart';
 import '../../../l10n/app_localizations.dart';
@@ -34,7 +35,10 @@ class _PartnerShareScreenState extends State<PartnerShareScreen> {
     Clipboard.setData(ClipboardData(text: code));
     final t = AppLocalizations.of(context);
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(t.codeCopied)),
+      SnackBar(
+        content: Text(t.codeCopied),
+        backgroundColor: AppTheme.fertileGreen,
+      ),
     );
   }
 
@@ -42,6 +46,7 @@ class _PartnerShareScreenState extends State<PartnerShareScreen> {
     final code = _linkCodeController.text.trim().toUpperCase();
     if (code.isEmpty) return;
     context.read<PartnerCubit>().linkToPartner(code);
+    setState(() => _showLinkForm = false);
   }
 
   void _unlinkPartner() {
@@ -50,6 +55,7 @@ class _PartnerShareScreenState extends State<PartnerShareScreen> {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Text(t.unlinkPartner),
         content: Text(t.unlinkConfirm),
         actions: [
@@ -57,11 +63,14 @@ class _PartnerShareScreenState extends State<PartnerShareScreen> {
             onPressed: () => Navigator.pop(ctx),
             child: Text(t.cancel),
           ),
-          TextButton(
+          ElevatedButton(
             onPressed: () {
               Navigator.pop(ctx);
               context.read<PartnerCubit>().unlinkPartner();
             },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppTheme.periodRed,
+            ),
             child: Text(t.unlink),
           ),
         ],
@@ -74,10 +83,27 @@ class _PartnerShareScreenState extends State<PartnerShareScreen> {
     final t = AppLocalizations.of(context);
 
     return Scaffold(
-      appBar: AppBar(title: Text(t.partnerSharing)),
-      body: BlocBuilder<PartnerCubit, PartnerState>(
+      appBar: AppBar(
+        title: Text(t.partnerSharing),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => context.pop(),
+        ),
+      ),
+      body: BlocConsumer<PartnerCubit, PartnerState>(
+        listener: (context, state) {
+          if (state.error != null) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(state.error!),
+                backgroundColor: AppTheme.periodRed,
+              ),
+            );
+            context.read<PartnerCubit>().clearError();
+          }
+        },
         builder: (context, state) {
-          if (state.status == PartnerStatus.loading) {
+          if (state.status == PartnerStatus.loading && state.partnerCode == null) {
             return const Center(child: CircularProgressIndicator());
           }
 
@@ -86,10 +112,18 @@ class _PartnerShareScreenState extends State<PartnerShareScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Icon(
-                  Icons.people,
-                  size: 64,
-                  color: Theme.of(context).colorScheme.primary,
+                Container(
+                  width: 64,
+                  height: 64,
+                  decoration: BoxDecoration(
+                    color: AppTheme.primaryLight,
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: const Icon(
+                    Icons.people,
+                    size: 32,
+                    color: AppTheme.primary,
+                  ),
                 ),
                 const SizedBox(height: 16),
                 Text(
@@ -97,6 +131,7 @@ class _PartnerShareScreenState extends State<PartnerShareScreen> {
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.bold,
+                        color: AppTheme.onSurface,
                       ),
                 ),
                 const SizedBox(height: 8),
@@ -104,18 +139,21 @@ class _PartnerShareScreenState extends State<PartnerShareScreen> {
                   t.shareSubtitle,
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Colors.grey[600],
+                        color: AppTheme.onSurfaceVariant,
                       ),
                 ),
                 const SizedBox(height: 32),
                 Card(
+                  margin: EdgeInsets.zero,
                   child: Padding(
-                    padding: const EdgeInsets.all(20),
+                    padding: const EdgeInsets.all(24),
                     child: Column(
                       children: [
                         Text(
                           t.yourPartnerCode,
-                          style: Theme.of(context).textTheme.titleSmall,
+                          style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                                color: AppTheme.onSurfaceVariant,
+                              ),
                         ),
                         const SizedBox(height: 12),
                         Text(
@@ -123,10 +161,10 @@ class _PartnerShareScreenState extends State<PartnerShareScreen> {
                           style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                                 fontWeight: FontWeight.bold,
                                 letterSpacing: 4,
-                                color: Theme.of(context).colorScheme.primary,
+                                color: AppTheme.primary,
                               ),
                         ),
-                        const SizedBox(height: 12),
+                        const SizedBox(height: 16),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -134,14 +172,14 @@ class _PartnerShareScreenState extends State<PartnerShareScreen> {
                               onPressed: state.partnerCode != null
                                   ? () => _copyCode(state.partnerCode!)
                                   : null,
-                              icon: const Icon(Icons.copy),
+                              icon: const Icon(Icons.copy, size: 18),
                               label: Text(t.copy),
                             ),
                             const SizedBox(width: 16),
                             TextButton.icon(
                               onPressed: () =>
                                   context.read<PartnerCubit>().regenerateCode(),
-                              icon: const Icon(Icons.refresh),
+                              icon: const Icon(Icons.refresh, size: 18),
                               label: Text(t.regenerate),
                             ),
                           ],
@@ -152,46 +190,48 @@ class _PartnerShareScreenState extends State<PartnerShareScreen> {
                 ),
                 const SizedBox(height: 24),
                 if (state.partnerView != null) ...[
-                  Card(
-                    color: AppTheme.fertileLight,
-                    child: Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Row(
-                        children: [
-                          const Icon(Icons.check_circle,
-                              color: AppTheme.fertileGreen),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  t.linkedWithText(state.partnerView!.user.name),
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.w600,
-                                  ),
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: AppTheme.fertileLight,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(Icons.check_circle, color: AppTheme.fertileGreen),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                t.linkedWithText(state.partnerView!.user.name),
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  color: AppTheme.onSurface,
                                 ),
-                                Text(
-                                  t.theyCanView,
-                                  style: TextStyle(
-                                    color: Colors.grey[600],
-                                    fontSize: 12,
-                                  ),
+                              ),
+                              Text(
+                                t.theyCanView,
+                                style: TextStyle(
+                                  color: AppTheme.onSurfaceVariant,
+                                  fontSize: 12,
                                 ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
                   const SizedBox(height: 16),
                   OutlinedButton.icon(
                     onPressed: _unlinkPartner,
-                    icon: const Icon(Icons.link_off),
+                    icon: const Icon(Icons.link_off, size: 20),
                     label: Text(t.unlinkPartner),
                     style: OutlinedButton.styleFrom(
-                      foregroundColor: Colors.red,
+                      foregroundColor: AppTheme.periodRed,
+                      side: const BorderSide(color: AppTheme.periodRed),
                     ),
                   ),
                 ] else ...[
@@ -235,16 +275,6 @@ class _PartnerShareScreenState extends State<PartnerShareScreen> {
                       ],
                     ),
                   ],
-                ],
-                if (state.error != null) ...[
-                  const SizedBox(height: 16),
-                  Text(
-                    state.error!,
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.error,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
                 ],
               ],
             ),

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
+import '../../../core/theme/app_theme.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../logic/locale/locale_cubit.dart';
 
@@ -13,18 +15,40 @@ class SettingsScreen extends StatelessWidget {
     final currentLocale = context.watch<LocaleCubit>().state;
 
     return Scaffold(
-      appBar: AppBar(title: Text(t.settings)),
+      appBar: AppBar(
+        title: Text(t.settings),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => context.pop(),
+        ),
+      ),
       body: ListView(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         children: [
-          const SizedBox(height: 8),
-          ListTile(
-            leading: const Icon(Icons.language),
-            title: Text(t.language),
-            subtitle: Text(
-              currentLocale.languageCode == 'pl' ? t.polish : t.english,
+          Card(
+            margin: EdgeInsets.zero,
+            child: ListTile(
+              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+              leading: Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: AppTheme.primaryLight,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: const Icon(Icons.language, color: AppTheme.primary, size: 22),
+              ),
+              title: Text(
+                t.language,
+                style: const TextStyle(fontWeight: FontWeight.w500),
+              ),
+              subtitle: Text(
+                currentLocale.languageCode == 'pl' ? t.polish : t.english,
+                style: TextStyle(color: AppTheme.onSurfaceVariant),
+              ),
+              trailing: const Icon(Icons.chevron_right, color: AppTheme.onSurfaceVariant),
+              onTap: () => _showLanguagePicker(context),
             ),
-            trailing: const Icon(Icons.chevron_right),
-            onTap: () => _showLanguagePicker(context),
           ),
         ],
       ),
@@ -39,14 +63,18 @@ class SettingsScreen extends StatelessWidget {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Text(t.language),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             ListTile(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
               title: Text(t.polish),
               trailing: currentLocale.languageCode == 'pl'
-                  ? const Icon(Icons.check, color: Colors.green)
+                  ? const Icon(Icons.check, color: AppTheme.primary)
                   : null,
               onTap: () {
                 cubit.setLocale(const Locale('pl'));
@@ -54,9 +82,12 @@ class SettingsScreen extends StatelessWidget {
               },
             ),
             ListTile(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
               title: Text(t.english),
               trailing: currentLocale.languageCode == 'en'
-                  ? const Icon(Icons.check, color: Colors.green)
+                  ? const Icon(Icons.check, color: AppTheme.primary)
                   : null,
               onTap: () {
                 cubit.setLocale(const Locale('en'));

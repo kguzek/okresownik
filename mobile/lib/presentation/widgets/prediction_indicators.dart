@@ -20,7 +20,7 @@ class PredictionIndicator extends StatelessWidget {
         width: 6,
         height: 6,
         decoration: BoxDecoration(
-          color: AppTheme.predictionBlue.withValues(alpha: 0.5),
+          color: AppTheme.predictionBlue.withValues(alpha: 0.4),
           shape: BoxShape.circle,
         ),
       );
@@ -34,8 +34,8 @@ class PredictionIndicator extends StatelessWidget {
           color: AppTheme.fertileGreen,
           shape: BoxShape.circle,
           border: Border.all(
-            color: AppTheme.fertileGreen,
-            width: 2,
+            color: Colors.white,
+            width: 1.5,
           ),
         ),
       );

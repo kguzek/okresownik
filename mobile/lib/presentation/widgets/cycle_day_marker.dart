@@ -18,9 +18,10 @@ class CycleDayMarker extends StatelessWidget {
         Container(
           width: size,
           height: size,
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             color: AppTheme.periodRed,
             shape: BoxShape.circle,
+            border: Border.all(color: Colors.white, width: 1),
           ),
         ),
       );
@@ -31,9 +32,10 @@ class CycleDayMarker extends StatelessWidget {
         Container(
           width: 6,
           height: 6,
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             color: AppTheme.intercourseAmber,
             shape: BoxShape.circle,
+            border: Border.all(color: Colors.white, width: 1),
           ),
         ),
       );

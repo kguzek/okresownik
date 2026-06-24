@@ -42,6 +42,10 @@ abstract class AppLocalizations {
   String get intimacyLabel;
   String get today;
   String flowText(String flow);
+  String get flowSpotting;
+  String get flowLight;
+  String get flowMedium;
+  String get flowHeavy;
   String get intercourseLogged;
   String get clearDayData;
 

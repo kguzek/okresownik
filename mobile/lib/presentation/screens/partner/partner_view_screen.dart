@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import '../../../core/theme/app_theme.dart';
+import '../../../core/utils/polish_name_declension.dart';
 import '../../../data/models/partner_model.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../logic/partner/partner_cubit.dart';
@@ -26,91 +27,103 @@ class _PartnerViewScreenState extends State<PartnerViewScreen> {
     context.read<PartnerCubit>().loadPartnerView();
   }
 
+  String _titleForView(PartnerCalendarModel? view) {
+    final t = AppLocalizations.of(context);
+    if (view == null) return t.partnersCalendar;
+    final name = PolishNameDeclension.possessive(view.user.name);
+    return t.partnersCalendarText(name);
+  }
+
   @override
   Widget build(BuildContext context) {
     final t = AppLocalizations.of(context);
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(t.partnersCalendar),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => context.pop(),
-        ),
-      ),
-      body: BlocBuilder<PartnerCubit, PartnerState>(
-        builder: (context, state) {
-          if (state.status == PartnerStatus.loading) {
-            return const Center(child: CircularProgressIndicator());
-          }
+    return BlocBuilder<PartnerCubit, PartnerState>(
+      builder: (context, state) {
+        final view = state.partnerView;
 
-          if (state.error != null) {
-            return Center(
-              child: Padding(
-                padding: const EdgeInsets.all(24),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      width: 64,
-                      height: 64,
-                      decoration: BoxDecoration(
-                        color: AppTheme.divider,
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: const Icon(Icons.link_off, size: 32, color: AppTheme.onSurfaceVariant),
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      t.notLinkedYet,
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            color: AppTheme.onSurface,
-                            fontWeight: FontWeight.w600,
-                          ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      t.notLinkedSubtitle,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(color: AppTheme.onSurfaceVariant),
-                    ),
-                  ],
-                ),
-              ),
-            );
-          }
+        return Scaffold(
+          appBar: AppBar(
+            title: Text(_titleForView(view)),
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back),
+              onPressed: () => context.pop(),
+            ),
+          ),
+          body: _buildBody(context, state, view, t),
+        );
+      },
+    );
+  }
 
-          final view = state.partnerView;
-          if (view == null) {
-            return Center(child: Text(t.noDataAvailable));
-          }
+  Widget _buildBody(BuildContext context, PartnerState state, PartnerCalendarModel? view, AppLocalizations t) {
+    if (state.status == PartnerStatus.loading) {
+      return const Center(child: CircularProgressIndicator());
+    }
 
-          return Column(
+    if (state.error != null) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              _PartnerHeader(partner: view),
-              Expanded(
-                child: CalendarWidget(
-                  focusedDay: _focusedDay,
-                  cycleDays: view.cycleDays,
-                  prediction: view.prediction,
-                  onDaySelected: (_) {},
-                  onPageChanged: (day) => setState(() => _focusedDay = day),
-                  onHeaderTapped: () {
-                    setState(() => _focusedDay = DateTime.now());
-                  },
+              Container(
+                width: 64,
+                height: 64,
+                decoration: BoxDecoration(
+                  color: AppTheme.divider,
+                  borderRadius: BorderRadius.circular(16),
                 ),
+                child: const Icon(Icons.link_off, size: 32, color: AppTheme.onSurfaceVariant),
               ),
-              Padding(
-                padding: const EdgeInsets.all(16),
-                child: Text(
-                  t.readOnlyView,
-                  style: TextStyle(color: AppTheme.onSurfaceVariant, fontSize: 12),
-                ),
+              const SizedBox(height: 16),
+              Text(
+                t.notLinkedYet,
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      color: AppTheme.onSurface,
+                      fontWeight: FontWeight.w600,
+                    ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                t.notLinkedSubtitle,
+                textAlign: TextAlign.center,
+                style: TextStyle(color: AppTheme.onSurfaceVariant),
               ),
             ],
-          );
-        },
-      ),
+          ),
+        ),
+      );
+    }
+
+    if (view == null) {
+      return Center(child: Text(t.noDataAvailable));
+    }
+
+    return Column(
+      children: [
+        _PartnerHeader(partner: view),
+        Expanded(
+          child: CalendarWidget(
+            focusedDay: _focusedDay,
+            cycleDays: view.cycleDays,
+            prediction: view.prediction,
+            onDaySelected: (_) {},
+            onPageChanged: (day) => setState(() => _focusedDay = day),
+            onHeaderTapped: () {
+              setState(() => _focusedDay = DateTime.now());
+            },
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(16),
+          child: Text(
+            t.readOnlyView,
+            style: TextStyle(color: AppTheme.onSurfaceVariant, fontSize: 12),
+          ),
+        ),
+      ],
     );
   }
 }

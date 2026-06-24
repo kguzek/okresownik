@@ -4,9 +4,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/theme/app_theme.dart';
+import '../../../core/utils/polish_name_declension.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../logic/partner/partner_cubit.dart';
 import '../../../logic/partner/partner_state.dart';
+import '../../widgets/error_toast.dart';
 
 class PartnerShareScreen extends StatefulWidget {
   const PartnerShareScreen({super.key});
@@ -93,12 +95,7 @@ class _PartnerShareScreenState extends State<PartnerShareScreen> {
       body: BlocConsumer<PartnerCubit, PartnerState>(
         listener: (context, state) {
           if (state.error != null) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.error!),
-                backgroundColor: AppTheme.periodRed,
-              ),
-            );
+            showErrorToast(context, state.error!);
             context.read<PartnerCubit>().clearError();
           }
         },
@@ -205,7 +202,11 @@ class _PartnerShareScreenState extends State<PartnerShareScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                t.linkedWithText(state.partnerView!.user.name),
+                                t.linkedWithText(
+                                  PolishNameDeclension.withName(
+                                    state.partnerView!.user.name,
+                                  ),
+                                ),
                                 style: const TextStyle(
                                   fontWeight: FontWeight.w600,
                                   color: AppTheme.onSurface,

@@ -17,6 +17,8 @@ class AppTheme {
   static const Color predictionBlue = Color(0xFF3B82F6);
   static const Color fertileGreen = Color(0xFF10B981);
   static const Color fertileLight = Color(0xFFD1FAE5);
+  static const Color fertileCyan = Color(0xFF06B6D4);
+  static const Color fertileCyanLight = Color(0xFFCFFAFE);
 
   static ThemeData get lightTheme {
     final colorScheme = ColorScheme.fromSeed(
@@ -99,6 +101,19 @@ class AppTheme {
         ),
         backgroundColor: Colors.white,
         surfaceTintColor: Colors.transparent,
+      ),
+      popupMenuTheme: PopupMenuThemeData(
+        color: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+          side: const BorderSide(color: divider, width: 1),
+        ),
+        elevation: 2,
+        surfaceTintColor: Colors.transparent,
+        textStyle: const TextStyle(
+          color: onSurface,
+          fontSize: 14,
+        ),
       ),
       snackBarTheme: SnackBarThemeData(
         behavior: SnackBarBehavior.floating,

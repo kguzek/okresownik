@@ -11,8 +11,8 @@ import '../../../logic/auth/auth_cubit.dart';
 import '../../../logic/cycle/cycle_cubit.dart';
 import '../../../logic/cycle/cycle_state.dart';
 import '../../../logic/partner/partner_cubit.dart';
-import '../../../logic/partner/partner_state.dart';
 import '../../widgets/calendar_widget.dart';
+import '../../widgets/error_toast.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -95,12 +95,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           curr.status == CycleStatus.error && curr.error != null,
       listener: (context, state) {
         if (state.error != null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.error!),
-              backgroundColor: AppTheme.periodRed,
-            ),
-          );
+          showErrorToast(context, state.error!);
           context.read<CycleCubit>().clearError();
         }
       },
@@ -111,7 +106,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
             style: const TextStyle(fontWeight: FontWeight.w600),
           ),
           actions: [
-            const _PartnerStatusIcon(),
             PopupMenuButton<String>(
               onSelected: (value) {
                 switch (value) {
@@ -266,11 +260,19 @@ class _LegendRow extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          _LegendDot(color: AppTheme.periodRed, label: t.periodLabel),
-          const SizedBox(width: 20),
-          _LegendDot(color: AppTheme.fertileGreen, label: t.fertileLabel),
-          const SizedBox(width: 20),
-          _LegendDot(color: AppTheme.intercourseAmber, label: t.intimacyLabel),
+          _LegendDot(
+            color: AppTheme.primary,
+            label: t.periodLabel,
+            isDashed: true,
+          ),
+          const SizedBox(width: 14),
+          _LegendDot(
+            color: AppTheme.fertileCyan,
+            label: t.fertileLabel,
+            isDashed: true,
+          ),
+          const SizedBox(width: 14),
+          _LegendDot(color: AppTheme.primary, label: t.intimacyLabel),
         ],
       ),
     );
@@ -280,22 +282,34 @@ class _LegendRow extends StatelessWidget {
 class _LegendDot extends StatelessWidget {
   final Color color;
   final String label;
+  final bool isDashed;
 
-  const _LegendDot({required this.color, required this.label});
+  const _LegendDot({
+    required this.color,
+    required this.label,
+    this.isDashed = false,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Container(
-          width: 8,
-          height: 8,
-          decoration: BoxDecoration(
-            color: color,
-            shape: BoxShape.circle,
+        if (isDashed)
+          CustomPaint(
+            size: const Size(10, 10),
+            painter: _DashedCirclePainter(color: color),
+          )
+        else
+          Container(
+            width: 8,
+            height: 8,
+            decoration: BoxDecoration(
+              color: color,
+              shape: BoxShape.circle,
+              border: Border.all(color: Colors.white, width: 1),
+            ),
           ),
-        ),
         const SizedBox(width: 6),
         Text(
           label,
@@ -308,25 +322,41 @@ class _LegendDot extends StatelessWidget {
   }
 }
 
-class _PartnerStatusIcon extends StatelessWidget {
-  const _PartnerStatusIcon();
+class _DashedCirclePainter extends CustomPainter {
+  final Color color;
+
+  _DashedCirclePainter({required this.color});
 
   @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<PartnerCubit, PartnerState>(
-      builder: (context, state) {
-        final isLinked = state.partnerView != null;
-        return Padding(
-          padding: const EdgeInsets.only(right: 4),
-          child: Icon(
-            isLinked ? Icons.people : Icons.person_outline,
-            color: isLinked ? AppTheme.primary : AppTheme.onSurfaceVariant,
-            size: 22,
-          ),
-        );
-      },
-    );
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = color
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.5;
+
+    const dashWidth = 3.0;
+    const dashSpace = 2.0;
+    final radius = size.width / 2 - 1;
+    final center = Offset(size.width / 2, size.height / 2);
+
+    final totalLength = 2 * 3.14159 * radius;
+    final segments = (totalLength / (dashWidth + dashSpace)).floor();
+
+    for (var i = 0; i < segments; i++) {
+      final startAngle = i * (dashWidth + dashSpace) / radius;
+      canvas.drawArc(
+        Rect.fromCircle(center: center, radius: radius),
+        startAngle,
+        dashWidth / radius,
+        false,
+        paint,
+      );
+    }
   }
+
+  @override
+  bool shouldRepaint(covariant _DashedCirclePainter oldDelegate) =>
+      oldDelegate.color != color;
 }
 
 class _DayDetailsSheet extends StatefulWidget {
@@ -414,7 +444,7 @@ class _DayDetailsSheetState extends State<_DayDetailsSheet> {
               _InfoChip(
                 icon: Icons.favorite,
                 label: t.intimacyLabel,
-                color: AppTheme.intercourseAmber,
+                color: AppTheme.fertileCyan,
               ),
             if (widget.dayData!.notes.isNotEmpty)
               Padding(
@@ -467,8 +497,8 @@ class _DayDetailsSheetState extends State<_DayDetailsSheet> {
                       style: const TextStyle(fontWeight: FontWeight.w600),
                     ),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppTheme.intercourseAmber.withValues(alpha: 0.1),
-                      foregroundColor: AppTheme.intercourseAmber,
+                      backgroundColor: AppTheme.fertileCyan.withValues(alpha: 0.1),
+                      foregroundColor: AppTheme.fertileCyan,
                       elevation: 0,
                       padding: const EdgeInsets.symmetric(vertical: 14),
                     ),

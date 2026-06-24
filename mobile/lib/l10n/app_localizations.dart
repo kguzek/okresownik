@@ -68,6 +68,7 @@ abstract class AppLocalizations {
   String get link;
 
   String get partnersCalendar;
+  String partnersCalendarText(String name);
   String get notLinkedYet;
   String get notLinkedSubtitle;
   String get noDataAvailable;

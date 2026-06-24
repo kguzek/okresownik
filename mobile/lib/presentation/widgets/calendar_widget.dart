@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 
+import '../../core/theme/app_theme.dart';
 import '../../data/models/cycle_day_model.dart';
 import '../../data/models/prediction_model.dart';
+import '../../l10n/app_localizations.dart';
 import 'cycle_day_marker.dart';
-import 'prediction_indicators.dart';
 
 class CalendarWidget extends StatelessWidget {
   final DateTime focusedDay;
@@ -35,6 +36,51 @@ class CalendarWidget extends StatelessWidget {
     return map;
   }
 
+  Color _textColor(DateTime date, bool isOutside, bool isSelected) {
+    if (isSelected) return Colors.white;
+    if (isOutside) return AppTheme.onSurfaceVariant.withValues(alpha: 0.5);
+    if (prediction == null) return AppTheme.onSurface;
+    if (prediction!.isPeriodDay(date)) return AppTheme.primary;
+    if (prediction!.isFertileDay(date)) return AppTheme.fertileCyan;
+    return AppTheme.onSurface;
+  }
+
+  BoxDecoration? _predictionBorder(DateTime date) {
+    if (prediction == null) return null;
+
+    if (prediction!.isPeriodDay(date)) {
+      return BoxDecoration(
+        shape: BoxShape.circle,
+        border: Border.all(
+          color: AppTheme.primary.withValues(alpha: 0.5),
+          width: 1.5,
+        ),
+      );
+    }
+
+    if (prediction!.isOvulationDay(date)) {
+      return BoxDecoration(
+        shape: BoxShape.circle,
+        border: Border.all(
+          color: AppTheme.fertileCyan,
+          width: 2,
+        ),
+      );
+    }
+
+    if (prediction!.isFertileDay(date)) {
+      return BoxDecoration(
+        shape: BoxShape.circle,
+        border: Border.all(
+          color: AppTheme.fertileCyan.withValues(alpha: 0.4),
+          width: 1.5,
+        ),
+      );
+    }
+
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -49,22 +95,13 @@ class CalendarWidget extends StatelessWidget {
       onPageChanged: onPageChanged,
       onHeaderTapped: (_) => onHeaderTapped?.call(),
       calendarStyle: CalendarStyle(
-        todayDecoration: BoxDecoration(
-          color: theme.colorScheme.primary.withValues(alpha: 0.15),
-          shape: BoxShape.circle,
-        ),
-        selectedDecoration: BoxDecoration(
-          color: theme.colorScheme.primary,
-          shape: BoxShape.circle,
-        ),
-        todayTextStyle: TextStyle(
-          fontWeight: FontWeight.bold,
-          color: theme.colorScheme.primary,
-        ),
-        defaultTextStyle: TextStyle(color: theme.colorScheme.onSurface),
-        weekendTextStyle: TextStyle(color: theme.colorScheme.onSurfaceVariant),
+        isTodayHighlighted: false,
+        todayDecoration: const BoxDecoration(shape: BoxShape.circle),
+        selectedDecoration: const BoxDecoration(shape: BoxShape.circle),
+        defaultTextStyle: const TextStyle(color: AppTheme.onSurface),
+        weekendTextStyle: const TextStyle(color: AppTheme.onSurfaceVariant),
         outsideTextStyle: TextStyle(
-          color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
+          color: AppTheme.onSurfaceVariant.withValues(alpha: 0.5),
         ),
       ),
       headerStyle: HeaderStyle(
@@ -85,28 +122,65 @@ class CalendarWidget extends StatelessWidget {
         ),
       ),
       calendarBuilders: CalendarBuilders(
-        markerBuilder: (context, date, events) {
+        prioritizedBuilder: (context, date, _) {
+          final t = AppLocalizations.of(context);
+          final isToday = isSameDay(date, DateTime.now());
+          final isSelected = isSameDay(date, selectedDay);
+          final isOutside = date.month != focusedDay.month;
           final dayData = _dayMap[date];
-          if (dayData == null && prediction == null) return null;
+          final predictionBorder = _predictionBorder(date);
 
-          final markers = <Widget>[];
-
-          if (dayData != null) {
-            markers.add(CycleDayMarker(dayData: dayData));
+          BoxDecoration bgDecoration;
+          if (isSelected) {
+            bgDecoration = const BoxDecoration(
+              color: AppTheme.primary,
+              shape: BoxShape.circle,
+            );
+          } else {
+            bgDecoration = predictionBorder ??
+                const BoxDecoration(shape: BoxShape.circle);
           }
 
-          if (prediction != null) {
-            markers.add(PredictionIndicator(
-              prediction: prediction!,
-              date: date,
-            ));
-          }
+          final textColor = _textColor(date, isOutside, isSelected);
+          final fontWeight = isToday ? FontWeight.bold : FontWeight.normal;
 
-          if (markers.isEmpty) return null;
-
-          return Row(
-            mainAxisSize: MainAxisSize.min,
-            children: markers,
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 3),
+            child: Container(
+              decoration: bgDecoration,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    '${date.day}',
+                    style: TextStyle(
+                      color: textColor,
+                      fontWeight: fontWeight,
+                      fontSize: 13,
+                    ),
+                  ),
+                  if (isToday)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 1),
+                      child: Text(
+                        t.today,
+                        style: TextStyle(
+                          fontSize: 8,
+                          fontWeight: FontWeight.w600,
+                          color: isSelected
+                              ? Colors.white70
+                              : AppTheme.primary,
+                        ),
+                      ),
+                    ),
+                  if (dayData != null)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 1),
+                      child: CycleDayMarker(dayData: dayData),
+                    ),
+                ],
+              ),
+            ),
           );
         },
       ),

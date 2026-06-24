@@ -7,6 +7,7 @@ import (
 	"okresownik/internal/models"
 
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 type CycleService struct {
@@ -38,37 +39,26 @@ func (s *CycleService) GetDays(userID uint, from, to time.Time) ([]models.CycleD
 func (s *CycleService) UpsertDay(userID uint, date time.Time, isPeriod bool, isIntercourse bool, flow models.FlowLevel, notes string) (*models.CycleDay, error) {
 	date = date.Truncate(24 * time.Hour)
 
-	var day models.CycleDay
-	result := s.DB.Where("user_id = ? AND date = ?", userID, date).First(&day)
-
-	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-		day = models.CycleDay{
-			UserID:        userID,
-			Date:          date,
-			IsPeriod:      isPeriod,
-			IsIntercourse: isIntercourse,
-			Flow:          flow,
-			Notes:         notes,
-		}
-		if err := s.DB.Create(&day).Error; err != nil {
-			return nil, err
-		}
-		return &day, nil
+	day := models.CycleDay{
+		UserID:        userID,
+		Date:          date,
+		IsPeriod:      isPeriod,
+		IsIntercourse: isIntercourse,
+		Flow:          flow,
+		Notes:         notes,
 	}
 
-	if result.Error != nil {
-		return nil, result.Error
-	}
+	err := s.DB.Clauses(clause.OnConflict{
+		Columns:   []clause.Column{{Name: "user_id"}, {Name: "date"}},
+		DoUpdates: clause.AssignmentColumns([]string{"is_period", "is_intercourse", "flow", "notes", "updated_at"}),
+	}).Create(&day).Error
 
-	day.IsPeriod = isPeriod
-	day.IsIntercourse = isIntercourse
-	day.Flow = flow
-	day.Notes = notes
-
-	if err := s.DB.Save(&day).Error; err != nil {
+	if err != nil {
 		return nil, err
 	}
 
+	// Reload to get the full record (includes auto-updated timestamp)
+	s.DB.Where("user_id = ? AND date = ?", userID, date).First(&day)
 	return &day, nil
 }
 

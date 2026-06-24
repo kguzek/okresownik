@@ -127,6 +127,8 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get partnersCalendar => "Partner's Calendar";
   @override
+  String partnersCalendarText(String name) => "$name's Calendar";
+  @override
   String get notLinkedYet => 'Not linked to a partner yet';
   @override
   String get notLinkedSubtitle => 'Go to Share with Partner and enter their code';

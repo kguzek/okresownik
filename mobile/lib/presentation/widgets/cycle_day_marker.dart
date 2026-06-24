@@ -10,45 +10,52 @@ class CycleDayMarker extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final widgets = <Widget>[];
+    final isPeriod = dayData.isPeriod;
+    final isIntercourse = dayData.isIntercourse;
 
-    if (dayData.isPeriod) {
-      final size = dayData.isIntercourse ? 6.0 : 8.0;
-      widgets.add(
-        Container(
-          width: size,
-          height: size,
-          decoration: BoxDecoration(
-            color: AppTheme.periodRed,
-            shape: BoxShape.circle,
-            border: Border.all(color: Colors.white, width: 1),
-          ),
-        ),
-      );
+    if (isPeriod && isIntercourse) {
+      return _halfHalfDot();
     }
 
-    if (dayData.isIntercourse) {
-      widgets.add(
-        Container(
-          width: 6,
-          height: 6,
-          decoration: BoxDecoration(
-            color: AppTheme.intercourseAmber,
-            shape: BoxShape.circle,
-            border: Border.all(color: Colors.white, width: 1),
-          ),
-        ),
-      );
+    if (isPeriod) {
+      return _dot(AppTheme.primary);
     }
 
-    if (widgets.isEmpty) return const SizedBox.shrink();
+    if (isIntercourse) {
+      return _dot(AppTheme.fertileCyan);
+    }
 
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        if (widgets.length > 1) const SizedBox(width: 2),
-        ...widgets,
-      ],
+    return const SizedBox.shrink();
+  }
+
+  Widget _dot(Color color) {
+    return Container(
+      width: 8,
+      height: 8,
+      decoration: BoxDecoration(
+        color: color,
+        shape: BoxShape.circle,
+        border: Border.all(color: Colors.white, width: 1),
+      ),
+    );
+  }
+
+  Widget _halfHalfDot() {
+    return ClipOval(
+      clipBehavior: Clip.antiAlias,
+      child: Container(
+        width: 8,
+        height: 8,
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.white, width: 1),
+        ),
+        child: Column(
+          children: [
+            Expanded(child: Container(color: AppTheme.primary)),
+            Expanded(child: Container(color: AppTheme.fertileCyan)),
+          ],
+        ),
+      ),
     );
   }
 }

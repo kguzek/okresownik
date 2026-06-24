@@ -127,6 +127,8 @@ class AppLocalizationsPl extends AppLocalizations {
   @override
   String get partnersCalendar => 'Kalendarz partnera';
   @override
+  String partnersCalendarText(String name) => 'Kalendarz $name';
+  @override
   String get notLinkedYet => 'Jeszcze nie połączono z partnerem';
   @override
   String get notLinkedSubtitle => 'Przejdź do Udostępniania partnerowi i wprowadź jego kod';

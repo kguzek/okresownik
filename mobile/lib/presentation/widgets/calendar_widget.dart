@@ -147,6 +147,8 @@ class CalendarWidget extends StatelessWidget {
           return Padding(
             padding: const EdgeInsets.symmetric(vertical: 3),
             child: Container(
+              width: 40,
+              height: 40,
               decoration: bgDecoration,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,

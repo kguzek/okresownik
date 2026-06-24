@@ -18,7 +18,7 @@ import (
 // @title Okresownik API
 // @version 1.0
 // @description REST API for Okresownik.
-// @host okresownik.guzek.uk
+// @host api.okresownik.pl
 // @BasePath /
 // @schemes https
 // @securityDefinitions.apikey BearerAuth

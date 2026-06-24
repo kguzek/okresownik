@@ -184,7 +184,7 @@ definitions:
       updatedAt:
         type: string
     type: object
-host: okresownik.guzek.uk
+host: api.okresownik.pl
 info:
   contact: {}
   description: REST API for Okresownik.

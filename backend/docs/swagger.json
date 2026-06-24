@@ -9,7 +9,7 @@
         "contact": {},
         "version": "1.0"
     },
-    "host": "okresownik.guzek.uk",
+    "host": "api.okresownik.pl",
     "basePath": "/",
     "paths": {
         "/api/auth/login": {

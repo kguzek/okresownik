@@ -5,9 +5,10 @@ plugins {
 }
 
 android {
-    namespace = "com.example.okresownik"
+    namespace = "uk.guzek.okresownik"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
+    project.ext.set("appName", "okresownik")
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
@@ -15,14 +16,14 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.example.okresownik"
+        applicationId = "uk.guzek.okresownik"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+        setProperty("archivesBaseName", "$appName-$versionName-$versionCode")
     }
 
     buildTypes {

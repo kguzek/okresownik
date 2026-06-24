@@ -48,7 +48,8 @@ jobs:
         if: github.event_name == 'push'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npx --package semantic-release@24 --package @semantic-release/exec@7 --package @semantic-release/github@11 --package semantic-release-pub@0.3 semantic-release
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npx --package semantic-release@24 --package @semantic-release/exec@7 --package @semantic-release/github@11 semantic-release
 
       - name: Verify build (PR only)
         if: github.event_name == 'pull_request'

@@ -8,7 +8,6 @@ android {
     namespace = "uk.guzek.okresownik"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
-    project.ext.set("appName", "okresownik")
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
@@ -23,7 +22,6 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
-        setProperty("archivesBaseName", "$appName-$versionName-$versionCode")
     }
 
     buildTypes {

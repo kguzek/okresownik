@@ -43,10 +43,36 @@ jobs:
         run: flutter pub get
 
       - name: Build APK
-        run: flutter build apk --release
+        id: build-apk
+        run: |
+          VERSION=$(grep '^version:' pubspec.yaml | sed 's/version: //' | tr '+' '-')
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+          flutter build apk --release
+
+      - name: Rename APK
+        run: |
+          VERSION=${{ steps.build-apk.outputs.version }}
+          cd build/app/outputs/flutter-apk
+          for f in app-release.apk app-*-release.apk; do
+            [ -f "$f" ] || continue
+            suffix=$(echo "$f" | sed -E 's/app(-.*)?-release\.apk/\1/; s/^-//')
+            if [ -n "$suffix" ]; then
+              new_name="okresownik-v${VERSION}-${suffix}.apk"
+            else
+              new_name="okresownik-v${VERSION}.apk"
+            fi
+            mv "$f" "$new_name"
+            echo "Renamed: $f → $new_name"
+          done
 
       - name: Build app bundle
         run: flutter build appbundle --release
+
+      - name: Rename AAB
+        run: |
+          VERSION=${{ steps.build-apk.outputs.version }}
+          cd build/app/outputs/bundle/release
+          mv app-release.aab "okresownik-v${VERSION}.aab"
 
       - name: Create GitHub Release
         if: github.ref_type == 'tag'

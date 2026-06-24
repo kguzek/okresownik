@@ -14,11 +14,11 @@
       {
         "assets": [
           {
-            "path": "mobile/build/app/outputs/flutter-apk/okresownik-*.apk",
+            "path": "build/app/outputs/flutter-apk/okresownik-*.apk",
             "label": "APK"
           },
           {
-            "path": "mobile/build/app/outputs/bundle/release/okresownik-*.aab",
+            "path": "build/app/outputs/bundle/release/okresownik-*.aab",
             "label": "AAB"
           }
         ]

@@ -11,6 +11,7 @@ import '../../../logic/auth/auth_cubit.dart';
 import '../../../logic/cycle/cycle_cubit.dart';
 import '../../../logic/cycle/cycle_state.dart';
 import '../../../logic/partner/partner_cubit.dart';
+import '../../../logic/settings/calendar_settings_cubit.dart';
 import '../../widgets/calendar_widget.dart';
 import '../../widgets/error_toast.dart';
 
@@ -63,8 +64,16 @@ class _DashboardScreenState extends State<DashboardScreen> {
           context.read<CycleCubit>().markPeriodDay(date: dateStr, flow: flow);
           Navigator.pop(sheetContext);
         },
-        onMarkIntercourse: () {
-          context.read<CycleCubit>().markIntercourseDay(date: dateStr);
+        onToggleIntercourse: () {
+          final existing = context.read<CycleCubit>().state.dayForDate(date);
+          if (existing?.isIntercourse == true) {
+            context.read<CycleCubit>().markIntercourseDay(
+                  date: dateStr,
+                  isIntercourse: false,
+                );
+          } else {
+            context.read<CycleCubit>().markIntercourseDay(date: dateStr);
+          }
           Navigator.pop(sheetContext);
         },
         onClearDay: () {
@@ -85,10 +94,30 @@ class _DashboardScreenState extends State<DashboardScreen> {
     }
   }
 
+  StartingDayOfWeek _startingDayOfWeek(int weekday) {
+    switch (weekday) {
+      case DateTime.tuesday:
+        return StartingDayOfWeek.tuesday;
+      case DateTime.wednesday:
+        return StartingDayOfWeek.wednesday;
+      case DateTime.thursday:
+        return StartingDayOfWeek.thursday;
+      case DateTime.friday:
+        return StartingDayOfWeek.friday;
+      case DateTime.saturday:
+        return StartingDayOfWeek.saturday;
+      case DateTime.sunday:
+        return StartingDayOfWeek.sunday;
+      default:
+        return StartingDayOfWeek.monday;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final t = AppLocalizations.of(context);
     final isToday = isSameDay(_selectedDay, DateTime.now());
+    final firstWeekday = context.watch<CalendarSettingsCubit>().state;
 
     return BlocListener<CycleCubit, CycleState>(
       listenWhen: (prev, curr) =>
@@ -131,53 +160,64 @@ class _DashboardScreenState extends State<DashboardScreen> {
         ),
         body: Column(
           children: [
+            Expanded(
+              child: BlocBuilder<CycleCubit, CycleState>(
+                builder: (context, state) {
+                  return CalendarWidget(
+                    focusedDay: _focusedDay,
+                    selectedDay: _selectedDay,
+                    cycleDays: state.days,
+                    prediction: state.prediction,
+                    startingDayOfWeek: _startingDayOfWeek(firstWeekday),
+                    onDaySelected: _onDaySelected,
+                    onPageChanged: (day) => setState(() => _focusedDay = day),
+                    onHeaderTapped: () {
+                      setState(() {
+                        _focusedDay = DateTime.now();
+                        _selectedDay = DateTime.now();
+                      });
+                      context.read<CycleCubit>().selectDay(DateTime.now());
+                    },
+                  );
+                },
+              ),
+            ),
+            _PredictionSummaryCard(),
+            const SizedBox(height: 4),
+            _LegendRow(),
+            const SizedBox(height: 12),
             BlocBuilder<CycleCubit, CycleState>(
               builder: (context, state) {
-                return CalendarWidget(
-                  focusedDay: _focusedDay,
-                  selectedDay: _selectedDay,
-                  cycleDays: state.days,
-                  prediction: state.prediction,
-                  onDaySelected: _onDaySelected,
-                  onPageChanged: (day) => setState(() => _focusedDay = day),
-                  onHeaderTapped: () {
-                    setState(() {
-                      _focusedDay = DateTime.now();
-                      _selectedDay = DateTime.now();
-                    });
-                    context.read<CycleCubit>().selectDay(DateTime.now());
-                  },
-                );
-              },
-            ),
-            const SizedBox(height: 8),
-            _PredictionSummaryCard(),
-            const SizedBox(height: 8),
-            _LegendRow(),
-            const Spacer(),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
-              child: SizedBox(
-                width: double.infinity,
-                height: 52,
-                child: ElevatedButton.icon(
-                  onPressed: () => _showDayDetails(
-                    context
-                        .read<CycleCubit>()
-                        .state
-                        .dayForDate(_selectedDay),
-                    _selectedDay,
-                  ),
-                  icon: Icon(isToday ? Icons.edit_calendar : Icons.edit),
-                  label: Text(
-                    isToday ? t.logToday : t.logDate(DateFormat('MMM d').format(_selectedDay)),
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
+                final dayData = state.dayForDate(_selectedDay);
+                final hasRecord = dayData != null;
+                final formattedDate = DateFormat('MMM d').format(_selectedDay);
+                final buttonText = hasRecord
+                    ? isToday
+                        ? t.editRecordToday
+                        : t.editRecordDate(formattedDate)
+                    : isToday
+                        ? t.logToday
+                        : t.logDate(formattedDate);
+
+                return Padding(
+                  padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
+                  child: SizedBox(
+                    width: double.infinity,
+                    height: 52,
+                    child: ElevatedButton.icon(
+                      onPressed: () => _showDayDetails(dayData, _selectedDay),
+                      icon: Icon(isToday ? Icons.edit_calendar : Icons.edit),
+                      label: Text(
+                        buttonText,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
                     ),
                   ),
-                ),
-              ),
+                );
+              },
             ),
           ],
         ),
@@ -363,14 +403,14 @@ class _DayDetailsSheet extends StatefulWidget {
   final DateTime date;
   final CycleDayModel? dayData;
   final ValueChanged<String> onMarkPeriod;
-  final VoidCallback onMarkIntercourse;
+  final VoidCallback onToggleIntercourse;
   final VoidCallback onClearDay;
 
   const _DayDetailsSheet({
     required this.date,
     this.dayData,
     required this.onMarkPeriod,
-    required this.onMarkIntercourse,
+    required this.onToggleIntercourse,
     required this.onClearDay,
   });
 
@@ -379,13 +419,24 @@ class _DayDetailsSheet extends StatefulWidget {
 }
 
 class _DayDetailsSheetState extends State<_DayDetailsSheet> {
-  String _selectedFlow = 'light';
+  late String _selectedFlow;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedFlow = widget.dayData?.flow.isNotEmpty == true
+        ? widget.dayData!.flow
+        : 'light';
+  }
 
   @override
   Widget build(BuildContext context) {
     final t = AppLocalizations.of(context);
     final dateStr = DateFormat('EEEE, MMMM d, yyyy').format(widget.date);
     final isToday = isSameDay(widget.date, DateTime.now());
+    final hasData = widget.dayData != null;
+    final hasPeriod = hasData && widget.dayData!.isPeriod;
+    final hasIntercourse = hasData && widget.dayData!.isIntercourse;
 
     return Padding(
       padding: EdgeInsets.only(
@@ -430,83 +481,105 @@ class _DayDetailsSheetState extends State<_DayDetailsSheet> {
               ),
             ),
           const SizedBox(height: 24),
-          if (widget.dayData != null) ...[
-            if (widget.dayData!.isPeriod)
-              _InfoChip(
-                icon: Icons.water_drop,
-                label: t.periodLabel,
-                color: AppTheme.periodRed,
-                detail: widget.dayData!.flow.isNotEmpty
-                    ? t.flowText(widget.dayData!.flow)
-                    : null,
-              ),
-            if (widget.dayData!.isIntercourse)
-              _InfoChip(
-                icon: Icons.favorite,
-                label: t.intimacyLabel,
-                color: AppTheme.fertileCyan,
-              ),
-            if (widget.dayData!.notes.isNotEmpty)
-              Padding(
-                padding: const EdgeInsets.only(top: 8),
-                child: Text(
-                  widget.dayData!.notes,
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: AppTheme.onSurfaceVariant,
-                      ),
-                ),
-              ),
-            const SizedBox(height: 20),
-            OutlinedButton.icon(
-              onPressed: widget.onClearDay,
-              icon: const Icon(Icons.delete_outline, size: 20),
-              label: Text(t.clearDayData),
-              style: OutlinedButton.styleFrom(
-                foregroundColor: AppTheme.periodRed,
-                side: const BorderSide(color: AppTheme.periodRed),
+          if (hasPeriod)
+            _InfoChip(
+              icon: Icons.water_drop,
+              label: t.periodLabel,
+              color: AppTheme.periodRed,
+              detail: widget.dayData!.flow.isNotEmpty
+                  ? t.flowText(widget.dayData!.flow)
+                  : null,
+            ),
+          if (hasIntercourse)
+            _InfoChip(
+              icon: Icons.favorite,
+              label: t.intimacyLabel,
+              color: AppTheme.fertileCyan,
+            ),
+          if (hasData && widget.dayData!.notes.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.only(top: 8),
+              child: Text(
+                widget.dayData!.notes,
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: AppTheme.onSurfaceVariant,
+                    ),
               ),
             ),
-          ] else ...[
-            Row(
-              children: [
-                Expanded(
-                  child: ElevatedButton.icon(
-                    onPressed: () {
-                      _showFlowSelector(context);
-                    },
-                    icon: const Icon(Icons.water_drop, size: 20),
-                    label: Text(
-                      t.periodLabel,
-                      style: const TextStyle(fontWeight: FontWeight.w600),
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppTheme.periodRed.withValues(alpha: 0.1),
-                      foregroundColor: AppTheme.periodRed,
-                      elevation: 0,
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                    ),
+          const SizedBox(height: 20),
+          Row(
+            children: [
+              Expanded(
+                child: ElevatedButton.icon(
+                  onPressed: () {
+                    _showFlowSelector(context);
+                  },
+                  icon: Icon(
+                    Icons.water_drop,
+                    size: 20,
+                    color: hasPeriod ? AppTheme.periodRed : null,
+                  ),
+                  label: Text(
+                    t.periodLabel,
+                    style: TextStyle(fontWeight: FontWeight.w600),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: hasPeriod
+                        ? AppTheme.periodRed.withValues(alpha: 0.1)
+                        : AppTheme.surfaceContainerLow,
+                    foregroundColor: AppTheme.periodRed,
+                    elevation: 0,
+                    padding: const EdgeInsets.symmetric(vertical: 14),
                   ),
                 ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: ElevatedButton.icon(
-                    onPressed: widget.onMarkIntercourse,
-                    icon: const Icon(Icons.favorite, size: 20),
-                    label: Text(
-                      t.intimacyLabel,
-                      style: const TextStyle(fontWeight: FontWeight.w600),
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppTheme.fertileCyan.withValues(alpha: 0.1),
-                      foregroundColor: AppTheme.fertileCyan,
-                      elevation: 0,
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                    ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: ElevatedButton.icon(
+                  onPressed: widget.onToggleIntercourse,
+                  icon: Icon(
+                    Icons.favorite,
+                    size: 20,
+                    color: hasIntercourse ? AppTheme.fertileCyan : null,
+                  ),
+                  label: Text(
+                    t.intimacyLabel,
+                    style: const TextStyle(fontWeight: FontWeight.w600),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: hasIntercourse
+                        ? AppTheme.fertileCyan.withValues(alpha: 0.1)
+                        : AppTheme.surfaceContainerLow,
+                    foregroundColor: AppTheme.fertileCyan,
+                    elevation: 0,
+                    padding: const EdgeInsets.symmetric(vertical: 14),
                   ),
                 ),
-              ],
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          OutlinedButton.icon(
+            onPressed: hasData ? widget.onClearDay : null,
+            icon: const Icon(Icons.delete_outline, size: 20),
+            label: Text(t.clearDayData),
+            style: ButtonStyle(
+              foregroundColor: WidgetStateProperty.resolveWith((states) {
+                if (states.contains(WidgetState.disabled)) {
+                  return AppTheme.onSurfaceVariant.withValues(alpha: 0.4);
+                }
+                return AppTheme.periodRed;
+              }),
+              side: WidgetStateProperty.resolveWith((states) {
+                if (states.contains(WidgetState.disabled)) {
+                  return BorderSide(
+                    color: AppTheme.onSurfaceVariant.withValues(alpha: 0.15),
+                  );
+                }
+                return const BorderSide(color: AppTheme.periodRed);
+              }),
             ),
-          ],
+          ),
         ],
       ),
     );

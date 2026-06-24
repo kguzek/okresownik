@@ -40,10 +40,13 @@ class CycleCubit extends Cubit<CycleState> {
     String flow = 'light',
   }) async {
     try {
+      final existing = state.dayForDate(DateTime.parse(date));
       await _repository.upsertDay(
         date: date,
         isPeriod: isPeriod,
+        isIntercourse: existing?.isIntercourse ?? false,
         flow: flow,
+        notes: existing?.notes ?? '',
       );
       await loadDays();
       await loadPrediction();
@@ -57,13 +60,19 @@ class CycleCubit extends Cubit<CycleState> {
 
   Future<void> markIntercourseDay({
     required String date,
+    bool isIntercourse = true,
   }) async {
     try {
+      final existing = state.dayForDate(DateTime.parse(date));
       await _repository.upsertDay(
         date: date,
-        isIntercourse: true,
+        isPeriod: existing?.isPeriod ?? false,
+        isIntercourse: isIntercourse,
+        flow: existing?.flow ?? '',
+        notes: existing?.notes ?? '',
       );
       await loadDays();
+      await loadPrediction();
     } catch (e) {
       emit(state.copyWith(
         status: CycleStatus.error,

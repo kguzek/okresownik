@@ -5,57 +5,22 @@ import '../../core/theme/app_theme.dart';
 
 class CycleDayMarker extends StatelessWidget {
   final CycleDayModel dayData;
+  final bool inverted;
 
-  const CycleDayMarker({super.key, required this.dayData});
+  const CycleDayMarker({super.key, required this.dayData, this.inverted = false});
 
   @override
   Widget build(BuildContext context) {
-    final isPeriod = dayData.isPeriod;
     final isIntercourse = dayData.isIntercourse;
 
-    if (isPeriod && isIntercourse) {
-      return _halfHalfDot();
-    }
-
-    if (isPeriod) {
-      return _dot(AppTheme.primary);
-    }
-
     if (isIntercourse) {
-      return _dot(AppTheme.fertileCyan);
+      return Icon(
+        Icons.favorite,
+        size: 8,
+        color: inverted ? Colors.white : AppTheme.primary,
+      );
     }
 
     return const SizedBox.shrink();
-  }
-
-  Widget _dot(Color color) {
-    return Container(
-      width: 8,
-      height: 8,
-      decoration: BoxDecoration(
-        color: color,
-        shape: BoxShape.circle,
-        border: Border.all(color: Colors.white, width: 1),
-      ),
-    );
-  }
-
-  Widget _halfHalfDot() {
-    return ClipOval(
-      clipBehavior: Clip.antiAlias,
-      child: Container(
-        width: 8,
-        height: 8,
-        decoration: BoxDecoration(
-          border: Border.all(color: Colors.white, width: 1),
-        ),
-        child: Column(
-          children: [
-            Expanded(child: Container(color: AppTheme.primary)),
-            Expanded(child: Container(color: AppTheme.fertileCyan)),
-          ],
-        ),
-      ),
-    );
   }
 }

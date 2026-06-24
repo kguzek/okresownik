@@ -35,6 +35,8 @@ abstract class AppLocalizations {
   String get logout;
   String get logToday;
   String logDate(String formattedDate);
+  String get editRecordToday;
+  String editRecordDate(String formattedDate);
   String cycleDayText(int cycleDay);
   String nextPeriodExpectedText(String date);
   String get periodLabel;
@@ -77,6 +79,7 @@ abstract class AppLocalizations {
 
   String get settings;
   String get language;
+  String get firstDayOfWeek;
   String get polish;
   String get english;
 }

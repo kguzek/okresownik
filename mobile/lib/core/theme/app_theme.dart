@@ -19,6 +19,7 @@ class AppTheme {
   static const Color fertileLight = Color(0xFFD1FAE5);
   static const Color fertileCyan = Color(0xFF06B6D4);
   static const Color fertileCyanLight = Color(0xFFCFFAFE);
+  static const Color surfaceContainerLow = Color(0xFFF7F2F5);
 
   static ThemeData get lightTheme {
     final colorScheme = ColorScheme.fromSeed(

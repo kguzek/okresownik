@@ -49,6 +49,10 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String logDate(String formattedDate) => 'Log $formattedDate';
   @override
+  String get editRecordToday => 'Edit record today';
+  @override
+  String editRecordDate(String formattedDate) => 'Edit record $formattedDate';
+  @override
   String cycleDayText(int cycleDay) => 'Cycle Day $cycleDay';
   @override
   String nextPeriodExpectedText(String date) => 'Next period expected ~$date';
@@ -143,6 +147,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settings => 'Settings';
   @override
   String get language => 'Language';
+  @override
+  String get firstDayOfWeek => 'First day of week';
   @override
   String get polish => 'Polish';
   @override

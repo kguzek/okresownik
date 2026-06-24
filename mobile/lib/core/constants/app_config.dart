@@ -11,4 +11,5 @@ class AppConfig {
   static const String tokenKey = 'auth_token';
   static const String userDataKey = 'user_data';
   static const String localeKey = 'app_locale';
+  static const String firstWeekdayKey = 'first_weekday';
 }

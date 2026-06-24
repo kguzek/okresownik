@@ -12,6 +12,7 @@ import 'logic/auth/auth_cubit.dart';
 import 'logic/cycle/cycle_cubit.dart';
 import 'logic/locale/locale_cubit.dart';
 import 'logic/partner/partner_cubit.dart';
+import 'logic/settings/calendar_settings_cubit.dart';
 import 'presentation/router/app_router.dart';
 
 class OkresownikApp extends StatefulWidget {
@@ -30,6 +31,10 @@ class _OkresownikAppState extends State<OkresownikApp> {
   late final CycleCubit _cycleCubit;
   late final PartnerCubit _partnerCubit;
   late final LocaleCubit _localeCubit;
+  CalendarSettingsCubit? _calendarSettingsCubit;
+
+  CalendarSettingsCubit get _settingsCubit =>
+      _calendarSettingsCubit ??= CalendarSettingsCubit();
 
   @override
   void initState() {
@@ -42,6 +47,7 @@ class _OkresownikAppState extends State<OkresownikApp> {
     _cycleCubit = CycleCubit(_cycleRepository);
     _partnerCubit = PartnerCubit(_partnerRepository);
     _localeCubit = LocaleCubit();
+    _calendarSettingsCubit = CalendarSettingsCubit();
 
     _authCubit.checkAuth();
   }
@@ -53,6 +59,7 @@ class _OkresownikAppState extends State<OkresownikApp> {
     _cycleCubit.close();
     _partnerCubit.close();
     _localeCubit.close();
+    _calendarSettingsCubit?.close();
     super.dispose();
   }
 
@@ -66,6 +73,7 @@ class _OkresownikAppState extends State<OkresownikApp> {
         BlocProvider.value(value: _cycleCubit),
         BlocProvider.value(value: _partnerCubit),
         BlocProvider.value(value: _localeCubit),
+        BlocProvider.value(value: _settingsCubit),
       ],
       child: BlocBuilder<LocaleCubit, Locale>(
         builder: (context, locale) {

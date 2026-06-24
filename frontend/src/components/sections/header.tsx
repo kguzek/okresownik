@@ -1,5 +1,6 @@
 import { motion } from 'motion/react'
 import { GitHubIcon } from '@/components/icons/github-icon'
+import AppLogo from "@/assets/logo.png"
 
 export function Header() {
   return (
@@ -11,7 +12,7 @@ export function Header() {
     >
       <div className="mx-auto flex max-w-5xl items-center justify-between px-3 py-2.5">
         <div className="flex items-center gap-1.5">
-          <img src="/logo.png" alt="Okresownik" className="size-6" />
+          <img src={AppLogo} alt="Okresownik" className="size-6" />
           <span className="text-sm sm:text-lg font-semibold text-gray-900">Okresownik</span>
         </div>
         <nav className="hidden items-center gap-6 text-sm text-gray-600 sm:flex">

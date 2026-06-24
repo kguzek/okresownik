@@ -10,6 +10,13 @@
       }
     ],
     [
+      "@semantic-release/git",
+      {
+        "assets": ["pubspec.yaml"],
+        "message": "chore(mobile): bump version to ${nextRelease.version}\n\n${nextRelease.notes}"
+      }
+    ],
+    [
       "@semantic-release/github",
       {
         "assets": [

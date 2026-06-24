@@ -1,4 +1,4 @@
-name: CI (Mobile)
+name: CD (Mobile)
 
 permissions:
   contents: write
@@ -48,7 +48,7 @@ jobs:
         if: github.event_name == 'push'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npx --package semantic-release@24 --package @semantic-release/exec@7 --package @semantic-release/github@11 semantic-release
+        run: npx --package semantic-release@24 --package @semantic-release/exec@7 --package @semantic-release/github@11 --package @semantic-release/git@10 semantic-release
 
       - name: Build APK (PR only)
         if: github.event_name == 'pull_request'

@@ -114,7 +114,7 @@ func main() {
 
 	handler := middleware.CORSMiddleware(cfg.AllowedOrigins)(middleware.JSON(mux))
 
-	addr := fmt.Sprintf(":%s", cfg.Port)
+	addr := fmt.Sprintf("%s:%s", cfg.Host, cfg.Port)
 	log.Printf("server starting on %s", addr)
 	if err := http.ListenAndServe(addr, handler); err != nil {
 		log.Fatalf("server failed: %v", err)

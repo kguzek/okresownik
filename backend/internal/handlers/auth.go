@@ -50,6 +50,19 @@ func toUserResponse(user *models.User) userResponse {
 	}
 }
 
+// Register godoc
+// @Summary Register user
+// @Description Creates a user account and returns the user plus JWT.
+// @Tags auth
+// @Accept json
+// @Produce json
+// @Param request body registerRequest true "Registration data"
+// @Success 201 {object} authResponse
+// @Failure 400 {object} ErrorResponse
+// @Failure 401 {object} ErrorResponse
+// @Failure 405 {object} ErrorResponse
+// @Failure 409 {object} ErrorResponse
+// @Router /api/auth/register [post]
 func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		writeError(w, "method not allowed", http.StatusMethodNotAllowed)
@@ -81,6 +94,18 @@ func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
+// Login godoc
+// @Summary Log in
+// @Description Authenticates a user and returns the user plus JWT.
+// @Tags auth
+// @Accept json
+// @Produce json
+// @Param request body loginRequest true "Login credentials"
+// @Success 200 {object} authResponse
+// @Failure 400 {object} ErrorResponse
+// @Failure 401 {object} ErrorResponse
+// @Failure 405 {object} ErrorResponse
+// @Router /api/auth/login [post]
 func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		writeError(w, "method not allowed", http.StatusMethodNotAllowed)

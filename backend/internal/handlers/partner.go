@@ -24,6 +24,16 @@ type partnerCodeResponse struct {
 	PartnerCode string `json:"partnerCode"`
 }
 
+// GetPartnerCode godoc
+// @Summary Get partner code
+// @Description Returns the authenticated user's partner code.
+// @Tags partner
+// @Produce json
+// @Security BearerAuth
+// @Success 200 {object} partnerCodeResponse
+// @Failure 401 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Router /api/partner/code [get]
 func (h *PartnerHandler) GetPartnerCode(w http.ResponseWriter, r *http.Request) {
 	userID := middleware.GetUserID(r)
 
@@ -36,6 +46,16 @@ func (h *PartnerHandler) GetPartnerCode(w http.ResponseWriter, r *http.Request) 
 	writeJSON(w, http.StatusOK, partnerCodeResponse{PartnerCode: code})
 }
 
+// RegeneratePartnerCode godoc
+// @Summary Regenerate partner code
+// @Description Regenerates and returns the authenticated user's partner code.
+// @Tags partner
+// @Produce json
+// @Security BearerAuth
+// @Success 200 {object} partnerCodeResponse
+// @Failure 401 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Router /api/partner/code/regenerate [post]
 func (h *PartnerHandler) RegeneratePartnerCode(w http.ResponseWriter, r *http.Request) {
 	userID := middleware.GetUserID(r)
 
@@ -48,6 +68,20 @@ func (h *PartnerHandler) RegeneratePartnerCode(w http.ResponseWriter, r *http.Re
 	writeJSON(w, http.StatusOK, partnerCodeResponse{PartnerCode: code})
 }
 
+// LinkToPartner godoc
+// @Summary Link partner
+// @Description Links the authenticated user to another user by partner code.
+// @Tags partner
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param request body linkRequest true "Partner link data"
+// @Success 200 {object} map[string]string
+// @Failure 400 {object} ErrorResponse
+// @Failure 401 {object} ErrorResponse
+// @Failure 404 {object} ErrorResponse
+// @Failure 409 {object} ErrorResponse
+// @Router /api/partner/link [post]
 func (h *PartnerHandler) LinkToPartner(w http.ResponseWriter, r *http.Request) {
 	userID := middleware.GetUserID(r)
 
@@ -73,6 +107,17 @@ func (h *PartnerHandler) LinkToPartner(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusOK, map[string]string{"message": "partner linked successfully"})
 }
 
+// UnlinkPartner godoc
+// @Summary Unlink partner
+// @Description Unlinks the authenticated user's partner.
+// @Tags partner
+// @Produce json
+// @Security BearerAuth
+// @Success 200 {object} map[string]string
+// @Failure 400 {object} ErrorResponse
+// @Failure 401 {object} ErrorResponse
+// @Failure 404 {object} ErrorResponse
+// @Router /api/partner/unlink [post]
 func (h *PartnerHandler) UnlinkPartner(w http.ResponseWriter, r *http.Request) {
 	userID := middleware.GetUserID(r)
 
@@ -88,6 +133,17 @@ func (h *PartnerHandler) UnlinkPartner(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusOK, map[string]string{"message": "partner unlinked successfully"})
 }
 
+// GetPartnerView godoc
+// @Summary Get partner view
+// @Description Returns the linked partner's shared calendar view.
+// @Tags partner
+// @Produce json
+// @Security BearerAuth
+// @Success 200 {object} models.PartnerCalendarResponse
+// @Failure 400 {object} ErrorResponse
+// @Failure 401 {object} ErrorResponse
+// @Failure 404 {object} ErrorResponse
+// @Router /api/partner/view [get]
 func (h *PartnerHandler) GetPartnerView(w http.ResponseWriter, r *http.Request) {
 	userID := middleware.GetUserID(r)
 

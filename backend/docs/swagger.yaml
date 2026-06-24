@@ -1,0 +1,556 @@
+basePath: /
+definitions:
+  gorm.DeletedAt:
+    properties:
+      time:
+        type: string
+      valid:
+        description: Valid is true if Time is not NULL
+        type: boolean
+    type: object
+  handlers.ErrorResponse:
+    properties:
+      error:
+        type: string
+    type: object
+  handlers.authResponse:
+    properties:
+      token:
+        type: string
+      user:
+        $ref: '#/definitions/handlers.userResponse'
+    type: object
+  handlers.dayResponse:
+    properties:
+      date:
+        type: string
+      flow:
+        $ref: '#/definitions/models.FlowLevel'
+      id:
+        type: integer
+      isIntercourse:
+        type: boolean
+      isPeriod:
+        type: boolean
+      notes:
+        type: string
+    type: object
+  handlers.linkRequest:
+    properties:
+      partnerCode:
+        type: string
+    type: object
+  handlers.loginRequest:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    type: object
+  handlers.partnerCodeResponse:
+    properties:
+      partnerCode:
+        type: string
+    type: object
+  handlers.registerRequest:
+    properties:
+      email:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+    type: object
+  handlers.upsertDayRequest:
+    properties:
+      date:
+        type: string
+      flow:
+        $ref: '#/definitions/models.FlowLevel'
+      isIntercourse:
+        type: boolean
+      isPeriod:
+        type: boolean
+      notes:
+        type: string
+    type: object
+  handlers.userResponse:
+    properties:
+      email:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      partnerCode:
+        type: string
+      partnerId:
+        type: integer
+    type: object
+  main.healthResponse:
+    properties:
+      status:
+        type: string
+    type: object
+  models.CycleDay:
+    properties:
+      createdAt:
+        type: string
+      date:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      flow:
+        $ref: '#/definitions/models.FlowLevel'
+      id:
+        type: integer
+      isIntercourse:
+        type: boolean
+      isPeriod:
+        type: boolean
+      notes:
+        type: string
+      updatedAt:
+        type: string
+      userId:
+        type: integer
+    type: object
+  models.FlowLevel:
+    enum:
+    - spotting
+    - light
+    - medium
+    - heavy
+    type: string
+    x-enum-varnames:
+    - FlowSpotting
+    - FlowLight
+    - FlowMedium
+    - FlowHeavy
+  models.PartnerCalendarResponse:
+    properties:
+      cycleDays:
+        items:
+          $ref: '#/definitions/models.CycleDay'
+        type: array
+      prediction:
+        $ref: '#/definitions/models.Prediction'
+      user:
+        $ref: '#/definitions/models.User'
+    type: object
+  models.Prediction:
+    properties:
+      averageCycleLength:
+        type: number
+      averagePeriodDuration:
+        type: number
+      confidence:
+        type: string
+      cycleDay:
+        type: integer
+      fertileWindowEnd:
+        type: string
+      fertileWindowStart:
+        type: string
+      nextPeriodEnd:
+        type: string
+      nextPeriodStart:
+        type: string
+      ovulationDate:
+        type: string
+    type: object
+  models.User:
+    properties:
+      createdAt:
+        type: string
+      cycleDays:
+        items:
+          $ref: '#/definitions/models.CycleDay'
+        type: array
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      email:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      partner:
+        $ref: '#/definitions/models.User'
+      partnerCode:
+        type: string
+      partnerId:
+        type: integer
+      updatedAt:
+        type: string
+    type: object
+host: okresownik.guzek.uk
+info:
+  contact: {}
+  description: REST API for Okresownik.
+  title: Okresownik API
+  version: "1.0"
+paths:
+  /api/auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Authenticates a user and returns the user plus JWT.
+      parameters:
+      - description: Login credentials
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.loginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.authResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "405":
+          description: Method Not Allowed
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Log in
+      tags:
+      - auth
+  /api/auth/register:
+    post:
+      consumes:
+      - application/json
+      description: Creates a user account and returns the user plus JWT.
+      parameters:
+      - description: Registration data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.registerRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/handlers.authResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "405":
+          description: Method Not Allowed
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Register user
+      tags:
+      - auth
+  /api/cycle/days:
+    get:
+      description: Lists cycle days for the authenticated user.
+      parameters:
+      - description: Start date in YYYY-MM-DD format
+        in: query
+        name: from
+        type: string
+      - description: End date in YYYY-MM-DD format
+        in: query
+        name: to
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/handlers.dayResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: List cycle days
+      tags:
+      - cycle
+    post:
+      consumes:
+      - application/json
+      description: Creates or updates a cycle day for the authenticated user.
+      parameters:
+      - description: Cycle day data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.upsertDayRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.dayResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Create or update cycle day
+      tags:
+      - cycle
+  /api/cycle/days/{id}:
+    delete:
+      description: Deletes a cycle day by ID for the authenticated user.
+      parameters:
+      - description: Cycle day ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Delete cycle day
+      tags:
+      - cycle
+  /api/cycle/predictions:
+    get:
+      description: Returns cycle predictions for the authenticated user.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Prediction'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get cycle predictions
+      tags:
+      - cycle
+  /api/partner/code:
+    get:
+      description: Returns the authenticated user's partner code.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.partnerCodeResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get partner code
+      tags:
+      - partner
+  /api/partner/code/regenerate:
+    post:
+      description: Regenerates and returns the authenticated user's partner code.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.partnerCodeResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Regenerate partner code
+      tags:
+      - partner
+  /api/partner/link:
+    post:
+      consumes:
+      - application/json
+      description: Links the authenticated user to another user by partner code.
+      parameters:
+      - description: Partner link data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.linkRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Link partner
+      tags:
+      - partner
+  /api/partner/unlink:
+    post:
+      description: Unlinks the authenticated user's partner.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Unlink partner
+      tags:
+      - partner
+  /api/partner/view:
+    get:
+      description: Returns the linked partner's shared calendar view.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.PartnerCalendarResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get partner view
+      tags:
+      - partner
+  /health:
+    get:
+      description: Returns service health status.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/main.healthResponse'
+        "405":
+          description: Method Not Allowed
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Health check
+      tags:
+      - health
+schemes:
+- https
+securityDefinitions:
+  BearerAuth:
+    description: Type "Bearer" followed by a space and a JWT.
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

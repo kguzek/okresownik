@@ -6,12 +6,25 @@ import (
 	"net/http"
 
 	"okresownik/config"
+	_ "okresownik/docs"
 	"okresownik/internal/database"
 	"okresownik/internal/handlers"
 	"okresownik/internal/middleware"
 	"okresownik/internal/services"
+
+	httpSwagger "github.com/swaggo/http-swagger"
 )
 
+// @title Okresownik API
+// @version 1.0
+// @description REST API for Okresownik.
+// @host okresownik.guzek.uk
+// @BasePath /
+// @schemes https
+// @securityDefinitions.apikey BearerAuth
+// @in header
+// @name Authorization
+// @description Type "Bearer" followed by a space and a JWT.
 func main() {
 	cfg := config.Load()
 
@@ -27,13 +40,8 @@ func main() {
 	partnerHandler := handlers.NewPartnerHandler(partnerService)
 
 	mux := http.NewServeMux()
-	mux.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
-		if r.Method != http.MethodGet {
-			http.Error(w, `{"error":"method not allowed"}`, http.StatusMethodNotAllowed)
-			return
-		}
-		fmt.Fprint(w, `{"status":"ok"}`)
-	})
+	mux.HandleFunc("/health", healthHandler)
+	mux.Handle("/swagger/", httpSwagger.WrapHandler)
 
 	mux.HandleFunc("/api/auth/register", authHandler.Register)
 	mux.HandleFunc("/api/auth/login", authHandler.Login)
@@ -111,4 +119,24 @@ func main() {
 	if err := http.ListenAndServe(addr, handler); err != nil {
 		log.Fatalf("server failed: %v", err)
 	}
+}
+
+type healthResponse struct {
+	Status string `json:"status"`
+}
+
+// healthHandler godoc
+// @Summary Health check
+// @Description Returns service health status.
+// @Tags health
+// @Produce json
+// @Success 200 {object} healthResponse
+// @Failure 405 {object} handlers.ErrorResponse
+// @Router /health [get]
+func healthHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, `{"error":"method not allowed"}`, http.StatusMethodNotAllowed)
+		return
+	}
+	fmt.Fprint(w, `{"status":"ok"}`)
 }

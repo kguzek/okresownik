@@ -11,7 +11,7 @@
     "lint:fix": "biome check --write .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "typecheck": "tsc -b --noEmit"
+    "types:check": "tsc -b --noEmit"
   },
   "dependencies": {
     "react": "^19.2.7",
@@ -29,5 +29,9 @@
     "tailwindcss": "^4.3.1",
     "typescript": "~6.0.2",
     "vite": "^8.1.0"
+  },
+  "packageManager": "pnpm@11.2.2",
+  "volta": {
+    "node": "26.3.1"
   }
 }

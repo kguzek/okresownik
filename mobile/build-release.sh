@@ -12,12 +12,12 @@ for f in build/app/outputs/flutter-apk/app-release.apk build/app/outputs/flutter
   base=$(basename "$f")
   suffix=$(echo "$base" | sed -E 's/app(-.*)?-release\.apk/\1/; s/^-//')
   if [ -n "$suffix" ]; then
-    mv "$f" "build/app/outputs/flutter-apk/okresownik-v$VERSION-$suffix.apk"
+    mv "$f" "build/app/outputs/flutter-apk/okresownik-$suffix.apk"
   else
-    mv "$f" "build/app/outputs/flutter-apk/okresownik-v$VERSION.apk"
+    mv "$f" "build/app/outputs/flutter-apk/okresownik.apk"
   fi
 done
 
 flutter build appbundle --release --build-name="$VERSION" --build-number="$(echo "$VERSION" | tr -cd '0-9')"
 
-mv build/app/outputs/bundle/release/app-release.aab "build/app/outputs/bundle/release/okresownik-v$VERSION.aab"
+mv build/app/outputs/bundle/release/app-release.aab "build/app/outputs/bundle/release/okresownik.aab"

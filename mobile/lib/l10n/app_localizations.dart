@@ -40,6 +40,7 @@ abstract class AppLocalizations {
   String cycleDayText(int cycleDay);
   String nextPeriodExpectedText(String date);
   String get periodLabel;
+  String get predictedPeriodLabel;
   String get fertileLabel;
   String get intimacyLabel;
   String get today;

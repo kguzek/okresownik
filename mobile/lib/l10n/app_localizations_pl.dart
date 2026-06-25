@@ -59,7 +59,9 @@ class AppLocalizationsPl extends AppLocalizations {
   @override
   String get periodLabel => 'Miesiączka';
   @override
-  String get fertileLabel => 'Płodny';
+  String get predictedPeriodLabel => 'Przewidywana miesiączka';
+  @override
+  String get fertileLabel => 'Dni płodne';
   @override
   String get intimacyLabel => 'Intymność';
   @override

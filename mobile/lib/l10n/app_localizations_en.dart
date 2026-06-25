@@ -59,6 +59,8 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get periodLabel => 'Period';
   @override
+  String get predictedPeriodLabel => 'Predicted period';
+  @override
   String get fertileLabel => 'Fertile';
   @override
   String get intimacyLabel => 'Intimacy';

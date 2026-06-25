@@ -182,9 +182,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 },
               ),
             ),
-            _PredictionSummaryCard(),
             const SizedBox(height: 4),
             _LegendRow(),
+            const SizedBox(height: 8),
+            _PredictionSummaryCard(),
             const SizedBox(height: 12),
             BlocBuilder<CycleCubit, CycleState>(
               builder: (context, state) {
@@ -297,22 +298,49 @@ class _LegendRow extends StatelessWidget {
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
+      child: Wrap(
+        alignment: WrapAlignment.center,
+        runSpacing: 6,
+        spacing: 14,
         children: [
-          _LegendDot(
-            color: AppTheme.primary,
-            label: t.periodLabel,
-            isDashed: true,
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 8,
+                height: 8,
+                decoration: BoxDecoration(
+                  color: AppTheme.primary,
+                  shape: BoxShape.circle,
+                  border: Border.all(color: Colors.white, width: 1),
+                ),
+              ),
+              const SizedBox(width: 3),
+              CustomPaint(
+                size: const Size(10, 10),
+                painter: _DashedCirclePainter(
+                  color: AppTheme.primary.withValues(alpha: 0.5),
+                ),
+              ),
+              const SizedBox(width: 6),
+              Text(
+                t.periodLabel,
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: AppTheme.onSurfaceVariant,
+                    ),
+              ),
+            ],
           ),
-          const SizedBox(width: 14),
           _LegendDot(
             color: AppTheme.fertileCyan,
             label: t.fertileLabel,
             isDashed: true,
           ),
-          const SizedBox(width: 14),
-          _LegendDot(color: AppTheme.primary, label: t.intimacyLabel),
+          _LegendDot(
+            color: AppTheme.primary,
+            label: t.intimacyLabel,
+            icon: Icons.favorite,
+          ),
         ],
       ),
     );
@@ -323,11 +351,13 @@ class _LegendDot extends StatelessWidget {
   final Color color;
   final String label;
   final bool isDashed;
+  final IconData? icon;
 
   const _LegendDot({
     required this.color,
     required this.label,
     this.isDashed = false,
+    this.icon,
   });
 
   @override
@@ -335,7 +365,9 @@ class _LegendDot extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        if (isDashed)
+        if (icon != null)
+          Icon(icon, size: 12, color: color)
+        else if (isDashed)
           CustomPaint(
             size: const Size(10, 10),
             painter: _DashedCirclePainter(color: color),

@@ -116,11 +116,14 @@ class _PartnerViewScreenState extends State<PartnerViewScreen> {
             },
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.all(16),
-          child: Text(
-            t.readOnlyView,
-            style: TextStyle(color: AppTheme.onSurfaceVariant, fontSize: 12),
+        SafeArea(
+          top: false,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+            child: Text(
+              t.readOnlyView,
+              style: TextStyle(color: AppTheme.onSurfaceVariant, fontSize: 12),
+            ),
           ),
         ),
       ],

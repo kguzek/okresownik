@@ -105,7 +105,7 @@ class _PartnerShareScreenState extends State<PartnerShareScreen> {
           }
 
           return SingleChildScrollView(
-            padding: const EdgeInsets.all(24),
+            padding: EdgeInsets.fromLTRB(24, 24, 24, MediaQuery.of(context).viewPadding.bottom + 24),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [

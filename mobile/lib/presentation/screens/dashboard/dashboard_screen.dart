@@ -158,69 +158,72 @@ class _DashboardScreenState extends State<DashboardScreen> {
             ),
           ],
         ),
-        body: Column(
-          children: [
-            Expanded(
-              child: BlocBuilder<CycleCubit, CycleState>(
-                builder: (context, state) {
-                  return CalendarWidget(
-                    focusedDay: _focusedDay,
-                    selectedDay: _selectedDay,
-                    cycleDays: state.days,
-                    prediction: state.prediction,
-                    startingDayOfWeek: _startingDayOfWeek(firstWeekday),
-                    onDaySelected: _onDaySelected,
-                    onPageChanged: (day) => setState(() => _focusedDay = day),
-                    onHeaderTapped: () {
-                      setState(() {
-                        _focusedDay = DateTime.now();
-                        _selectedDay = DateTime.now();
-                      });
-                      context.read<CycleCubit>().selectDay(DateTime.now());
-                    },
-                  );
-                },
+        body: SafeArea(
+          top: false,
+          child: Column(
+            children: [
+              Expanded(
+                child: BlocBuilder<CycleCubit, CycleState>(
+                  builder: (context, state) {
+                    return CalendarWidget(
+                      focusedDay: _focusedDay,
+                      selectedDay: _selectedDay,
+                      cycleDays: state.days,
+                      prediction: state.prediction,
+                      startingDayOfWeek: _startingDayOfWeek(firstWeekday),
+                      onDaySelected: _onDaySelected,
+                      onPageChanged: (day) => setState(() => _focusedDay = day),
+                      onHeaderTapped: () {
+                        setState(() {
+                          _focusedDay = DateTime.now();
+                          _selectedDay = DateTime.now();
+                        });
+                        context.read<CycleCubit>().selectDay(DateTime.now());
+                      },
+                    );
+                  },
+                ),
               ),
-            ),
-            const SizedBox(height: 4),
-            _LegendRow(),
-            const SizedBox(height: 8),
-            _PredictionSummaryCard(),
-            const SizedBox(height: 12),
-            BlocBuilder<CycleCubit, CycleState>(
-              builder: (context, state) {
-                final dayData = state.dayForDate(_selectedDay);
-                final hasRecord = dayData != null;
-                final formattedDate = DateFormat('MMM d').format(_selectedDay);
-                final buttonText = hasRecord
-                    ? isToday
-                        ? t.editRecordToday
-                        : t.editRecordDate(formattedDate)
-                    : isToday
-                        ? t.logToday
-                        : t.logDate(formattedDate);
+              const SizedBox(height: 4),
+              _LegendRow(),
+              const SizedBox(height: 8),
+              _PredictionSummaryCard(),
+              const SizedBox(height: 12),
+              BlocBuilder<CycleCubit, CycleState>(
+                builder: (context, state) {
+                  final dayData = state.dayForDate(_selectedDay);
+                  final hasRecord = dayData != null;
+                  final formattedDate = DateFormat('MMM d').format(_selectedDay);
+                  final buttonText = hasRecord
+                      ? isToday
+                          ? t.editRecordToday
+                          : t.editRecordDate(formattedDate)
+                      : isToday
+                          ? t.logToday
+                          : t.logDate(formattedDate);
 
-                return Padding(
-                  padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
-                  child: SizedBox(
-                    width: double.infinity,
-                    height: 52,
-                    child: ElevatedButton.icon(
-                      onPressed: () => _showDayDetails(dayData, _selectedDay),
-                      icon: Icon(isToday ? Icons.edit_calendar : Icons.edit),
-                      label: Text(
-                        buttonText,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
+                  return Padding(
+                    padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
+                    child: SizedBox(
+                      width: double.infinity,
+                      height: 52,
+                      child: ElevatedButton.icon(
+                        onPressed: () => _showDayDetails(dayData, _selectedDay),
+                        icon: Icon(isToday ? Icons.edit_calendar : Icons.edit),
+                        label: Text(
+                          buttonText,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                );
-              },
-            ),
-          ],
+                  );
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -623,7 +626,7 @@ class _DayDetailsSheetState extends State<_DayDetailsSheet> {
     showModalBottomSheet(
       context: context,
       builder: (ctx) => Padding(
-        padding: const EdgeInsets.all(24),
+        padding: EdgeInsets.fromLTRB(24, 24, 24, MediaQuery.of(ctx).viewInsets.bottom + 24),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,

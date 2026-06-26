@@ -7,7 +7,10 @@ import (
 	"strings"
 	"time"
 
+	"okresownik/internal/models"
+
 	"github.com/golang-jwt/jwt/v5"
+	"gorm.io/gorm"
 )
 
 func WriteJSON(w http.ResponseWriter, status int, v interface{}) {
@@ -85,6 +88,34 @@ func GetUserID(r *http.Request) uint {
 		return userID
 	}
 	return 0
+}
+
+const HasAcceptedKey contextKey = "hasAccepted"
+
+func AcceptanceCheckMiddleware(db *gorm.DB) func(http.Handler) http.Handler {
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			userID := GetUserID(r)
+			if userID == 0 {
+				WriteError(w, http.StatusUnauthorized, "unauthorized")
+				return
+			}
+
+			var user models.User
+			if err := db.Select("terms_accepted_at, privacy_accepted_at, consent_granted_at").First(&user, userID).Error; err != nil {
+				WriteError(w, http.StatusUnauthorized, "user not found")
+				return
+			}
+
+			if user.TermsAcceptedAt == nil || user.PrivacyAcceptedAt == nil || user.ConsentGrantedAt == nil {
+				WriteError(w, http.StatusForbidden, "terms of service, privacy policy, and data processing consent must be accepted")
+				return
+			}
+
+			ctx := context.WithValue(r.Context(), HasAcceptedKey, true)
+			next.ServeHTTP(w, r.WithContext(ctx))
+		})
+	}
 }
 
 func CORSMiddleware(allowedOrigins string) func(http.Handler) http.Handler {

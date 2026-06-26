@@ -4,6 +4,9 @@ class UserModel {
   final String name;
   final String partnerCode;
   final int? partnerId;
+  final DateTime? termsAcceptedAt;
+  final DateTime? privacyAcceptedAt;
+  final DateTime? consentGrantedAt;
 
   const UserModel({
     required this.id,
@@ -11,7 +14,15 @@ class UserModel {
     required this.name,
     required this.partnerCode,
     this.partnerId,
+    this.termsAcceptedAt,
+    this.privacyAcceptedAt,
+    this.consentGrantedAt,
   });
+
+  bool get hasAcceptedAll =>
+      termsAcceptedAt != null &&
+      privacyAcceptedAt != null &&
+      consentGrantedAt != null;
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
@@ -20,6 +31,15 @@ class UserModel {
       name: json['name'] as String,
       partnerCode: json['partnerCode'] as String,
       partnerId: json['partnerId'] as int?,
+      termsAcceptedAt: json['termsAcceptedAt'] != null
+          ? DateTime.tryParse(json['termsAcceptedAt'] as String)
+          : null,
+      privacyAcceptedAt: json['privacyAcceptedAt'] != null
+          ? DateTime.tryParse(json['privacyAcceptedAt'] as String)
+          : null,
+      consentGrantedAt: json['consentGrantedAt'] != null
+          ? DateTime.tryParse(json['consentGrantedAt'] as String)
+          : null,
     );
   }
 
@@ -29,5 +49,8 @@ class UserModel {
         'name': name,
         'partnerCode': partnerCode,
         'partnerId': partnerId,
+        'termsAcceptedAt': termsAcceptedAt?.toIso8601String(),
+        'privacyAcceptedAt': privacyAcceptedAt?.toIso8601String(),
+        'consentGrantedAt': consentGrantedAt?.toIso8601String(),
       };
 }

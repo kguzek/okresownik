@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:url_launcher/url_launcher.dart';
 
+import '../../../core/constants/app_config.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../logic/auth/auth_cubit.dart';
@@ -21,6 +23,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
   bool _obscurePassword = true;
+  bool _termsAccepted = false;
+  bool _privacyAccepted = false;
+  bool _consentGranted = false;
 
   @override
   void dispose() {
@@ -33,13 +38,27 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   void _submit() {
     if (!_formKey.currentState!.validate()) return;
+    if (!_termsAccepted || !_privacyAccepted || !_consentGranted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(t.acceptAllRequired),
+          backgroundColor: AppTheme.periodRed,
+        ),
+      );
+      return;
+    }
 
     context.read<AuthCubit>().register(
           email: _emailController.text.trim(),
           password: _passwordController.text,
           name: _nameController.text.trim(),
+          termsAccepted: _termsAccepted,
+          privacyAccepted: _privacyAccepted,
+          consentGranted: _consentGranted,
         );
   }
+
+  AppLocalizations get t => AppLocalizations.of(context);
 
   @override
   Widget build(BuildContext context) {
@@ -161,6 +180,33 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     },
                   ),
                   const SizedBox(height: 8),
+                  _LegalCheckbox(
+                    value: _termsAccepted,
+                    label: t.acceptTerms,
+                    onChanged: (v) => setState(() => _termsAccepted = v ?? false),
+                    onLinkTap: () => launchUrl(
+                      Uri.parse('${AppConfig.websiteBaseUrl}/regulamin'),
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  _LegalCheckbox(
+                    value: _privacyAccepted,
+                    label: t.acceptPrivacy,
+                    onChanged: (v) => setState(() => _privacyAccepted = v ?? false),
+                    onLinkTap: () => launchUrl(
+                      Uri.parse('${AppConfig.websiteBaseUrl}/polityka-prywatnosci'),
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  _LegalCheckbox(
+                    value: _consentGranted,
+                    label: t.consentDataProcessing,
+                    onChanged: (v) => setState(() => _consentGranted = v ?? false),
+                    onLinkTap: () => launchUrl(
+                      Uri.parse('${AppConfig.websiteBaseUrl}/polityka-prywatnosci'),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
                   BlocConsumer<AuthCubit, AuthState>(
                     listener: (context, state) {
                       if (state.status == AuthStatus.error && state.error != null) {
@@ -210,6 +256,51 @@ class _RegisterScreenState extends State<RegisterScreen> {
           ),
         ),
       ),
+    );
+  }
+}
+
+class _LegalCheckbox extends StatelessWidget {
+  final bool value;
+  final String label;
+  final ValueChanged<bool?> onChanged;
+  final VoidCallback onLinkTap;
+
+  const _LegalCheckbox({
+    required this.value,
+    required this.label,
+    required this.onChanged,
+    required this.onLinkTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(
+          width: 24,
+          height: 24,
+          child: Checkbox(
+            value: value,
+            onChanged: onChanged,
+            activeColor: AppTheme.primary,
+            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          ),
+        ),
+        const SizedBox(width: 8),
+        Expanded(
+          child: GestureDetector(
+            onTap: onLinkTap,
+            child: Text(
+              label,
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: AppTheme.onSurfaceVariant,
+                  ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

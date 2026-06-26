@@ -83,6 +83,26 @@ abstract class AppLocalizations {
   String get firstDayOfWeek;
   String get polish;
   String get english;
+
+  String get acceptTerms;
+  String get acceptPrivacy;
+  String get consentDataProcessing;
+  String get acceptAllRequired;
+  String get acceptAndContinue;
+
+  String get legalUpdateTitle;
+  String get legalUpdateSubtitle;
+  String get consentSummaryTitle;
+  String get consentSummaryBody;
+
+  String get deleteDataTitle;
+  String get deleteDataSubtitle;
+  String get deleteDataConfirm;
+  String get deleteDataSuccess;
+
+  String get deleteAccountTitle;
+  String get deleteAccountSubtitle;
+  String get deleteAccountConfirm;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

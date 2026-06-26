@@ -3,6 +3,9 @@ class ApiEndpoints {
 
   static const String register = '/api/auth/register';
   static const String login = '/api/auth/login';
+  static const String acceptTerms = '/api/auth/accept-terms';
+  static const String deleteData = '/api/auth/delete-data';
+  static const String deleteAccount = '/api/auth/delete-account';
 
   static const String cycleDays = '/api/cycle/days';
   static String cycleDayById(int id) => '/api/cycle/days/$id';

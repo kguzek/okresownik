@@ -6,6 +6,7 @@ import (
 	"errors"
 	"regexp"
 	"strings"
+	"time"
 
 	"okresownik/internal/middleware"
 	"okresownik/internal/models"
@@ -15,11 +16,15 @@ import (
 )
 
 var (
-	ErrEmailTaken         = errors.New("email already registered")
-	ErrInvalidEmail       = errors.New("invalid email format")
-	ErrInvalidPassword    = errors.New("password must be at least 8 characters")
-	ErrInvalidName        = errors.New("name is required")
-	ErrInvalidCredentials = errors.New("invalid email or password")
+	ErrEmailTaken             = errors.New("email already registered")
+	ErrInvalidEmail           = errors.New("invalid email format")
+	ErrInvalidPassword        = errors.New("password must be at least 8 characters")
+	ErrInvalidName            = errors.New("name is required")
+	ErrInvalidCredentials     = errors.New("invalid email or password")
+	ErrTermsNotAccepted       = errors.New("you must accept the Terms of Service")
+	ErrPrivacyNotAccepted     = errors.New("you must accept the Privacy Policy")
+	ErrConsentNotGranted      = errors.New("you must consent to data processing")
+	ErrUserNotFound           = errors.New("user not found")
 )
 
 type AuthService struct {
@@ -34,7 +39,7 @@ func NewAuthService(db *gorm.DB, jwtSecret string) *AuthService {
 	}
 }
 
-func (s *AuthService) Register(email, password, name string) (*models.User, string, error) {
+func (s *AuthService) Register(email, password, name string, termsAccepted, privacyAccepted, consentGranted bool) (*models.User, string, error) {
 	email = strings.TrimSpace(strings.ToLower(email))
 	name = strings.TrimSpace(name)
 
@@ -49,6 +54,16 @@ func (s *AuthService) Register(email, password, name string) (*models.User, stri
 
 	if len(password) < 8 {
 		return nil, "", ErrInvalidPassword
+	}
+
+	if !termsAccepted {
+		return nil, "", ErrTermsNotAccepted
+	}
+	if !privacyAccepted {
+		return nil, "", ErrPrivacyNotAccepted
+	}
+	if !consentGranted {
+		return nil, "", ErrConsentNotGranted
 	}
 
 	var existing models.User
@@ -68,11 +83,15 @@ func (s *AuthService) Register(email, password, name string) (*models.User, stri
 		return nil, "", err
 	}
 
+	now := time.Now()
 	user := models.User{
-		Email:        email,
-		PasswordHash: string(hashedPassword),
-		Name:         name,
-		PartnerCode:  partnerCode,
+		Email:             email,
+		PasswordHash:      string(hashedPassword),
+		Name:              name,
+		PartnerCode:       partnerCode,
+		TermsAcceptedAt:   &now,
+		PrivacyAcceptedAt: &now,
+		ConsentGrantedAt:  &now,
 	}
 
 	if err := s.DB.Create(&user).Error; err != nil {
@@ -108,6 +127,44 @@ func (s *AuthService) Login(email, password string) (*models.User, string, error
 	}
 
 	return &user, token, nil
+}
+
+func (s *AuthService) AcceptTerms(userID uint) error {
+	now := time.Now()
+	return s.DB.Model(&models.User{}).Where("id = ?", userID).Updates(map[string]interface{}{
+		"terms_accepted_at":   &now,
+		"privacy_accepted_at": &now,
+		"consent_granted_at":  &now,
+	}).Error
+}
+
+func (s *AuthService) DeleteData(userID uint) error {
+	return s.DB.Transaction(func(tx *gorm.DB) error {
+		if err := tx.Where("user_id = ?", userID).Delete(&models.CycleDay{}).Error; err != nil {
+			return err
+		}
+		if err := tx.Model(&models.User{}).Where("id = ?", userID).Updates(map[string]interface{}{
+			"partner_id": nil,
+		}).Error; err != nil {
+			return err
+		}
+		return nil
+	})
+}
+
+func (s *AuthService) DeleteAccount(userID uint) error {
+	return s.DB.Transaction(func(tx *gorm.DB) error {
+		if err := tx.Where("user_id = ?", userID).Delete(&models.CycleDay{}).Error; err != nil {
+			return err
+		}
+		if err := tx.Where("partner_id = ?", userID).Update("partner_id", nil).Error; err != nil {
+			return err
+		}
+		if err := tx.Where("id = ?", userID).Delete(&models.User{}).Error; err != nil {
+			return err
+		}
+		return nil
+	})
 }
 
 func generatePartnerCode() (string, error) {

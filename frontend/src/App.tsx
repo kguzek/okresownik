@@ -1,26 +1,17 @@
-import type { JSX } from "react";
+import { type JSX } from "react";
+import { Route, Routes } from "react-router-dom";
 
-import { Cta } from "@/components/sections/cta";
-import { Download } from "@/components/sections/download";
-import { Features } from "@/components/sections/features";
-import { Footer } from "@/components/sections/footer";
-import { GitHubSection } from "@/components/sections/github-section";
-import { Header } from "@/components/sections/header";
-import { Hero } from "@/components/sections/hero";
+import { LandingPage } from "./pages/landing-page";
+import PolitykaPrywatnosci from "./pages/polityka-prywatnosci";
+import Regulamin from "./pages/regulamin";
 
 function App(): JSX.Element {
   return (
-    <div className="from-surface min-h-screen bg-gradient-to-b via-white to-white">
-      <Header />
-      <main>
-        <Hero />
-        <Features />
-        <Download />
-        <Cta />
-        <GitHubSection />
-      </main>
-      <Footer />
-    </div>
+    <Routes>
+      <Route path="/" element={<LandingPage />} />
+      <Route path="/regulamin" element={<Regulamin />} />
+      <Route path="/polityka-prywatnosci" element={<PolitykaPrywatnosci />} />
+    </Routes>
   );
 }
 

@@ -18,6 +18,18 @@ export function Footer() {
         </p>
         <div className="flex items-center gap-4">
           <a
+            href="/regulamin"
+            className="hover:text-primary transition-colors"
+          >
+            Regulamin
+          </a>
+          <a
+            href="/polityka-prywatnosci"
+            className="hover:text-primary transition-colors"
+          >
+            Polityka prywatności
+          </a>
+          <a
             href="https://github.com/kguzek/okresownik"
             target="_blank"
             rel="noopener noreferrer"

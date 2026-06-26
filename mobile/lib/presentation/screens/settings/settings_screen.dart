@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 
 import '../../../core/theme/app_theme.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../logic/auth/auth_cubit.dart';
 import '../../../logic/locale/locale_cubit.dart';
 import '../../../logic/settings/calendar_settings_cubit.dart';
 
@@ -83,6 +84,78 @@ class SettingsScreen extends StatelessWidget {
                   onTap: () => _showFirstWeekdayPicker(context),
                 ),
               ],
+            ),
+          ),
+          const SizedBox(height: 16),
+          Card(
+            margin: EdgeInsets.zero,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ListTile(
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                  leading: Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: AppTheme.periodRed.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: const Icon(
+                      Icons.delete_outline,
+                      color: AppTheme.periodRed,
+                      size: 22,
+                    ),
+                  ),
+                  title: Text(
+                    t.deleteDataTitle,
+                    style: const TextStyle(fontWeight: FontWeight.w500),
+                  ),
+                  subtitle: Text(
+                    t.deleteDataSubtitle,
+                    style: TextStyle(color: AppTheme.onSurfaceVariant),
+                  ),
+                  trailing: const Icon(Icons.chevron_right, color: AppTheme.onSurfaceVariant),
+                  onTap: () => _confirmDeleteData(context),
+                ),
+                const Divider(height: 1, color: AppTheme.divider),
+                ListTile(
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                  leading: Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: AppTheme.periodRed.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: const Icon(
+                      Icons.person_remove_outlined,
+                      color: AppTheme.periodRed,
+                      size: 22,
+                    ),
+                  ),
+                  title: Text(
+                    t.deleteAccountTitle,
+                    style: TextStyle(fontWeight: FontWeight.w500, color: AppTheme.periodRed),
+                  ),
+                  subtitle: Text(
+                    t.deleteAccountSubtitle,
+                    style: TextStyle(color: AppTheme.onSurfaceVariant),
+                  ),
+                  trailing: const Icon(Icons.chevron_right, color: AppTheme.onSurfaceVariant),
+                  onTap: () => _confirmDeleteAccount(context),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 16),
+          Center(
+            child: TextButton(
+              onPressed: () => context.read<AuthCubit>().logout(),
+              child: Text(
+                t.logout,
+                style: const TextStyle(color: AppTheme.periodRed),
+              ),
             ),
           ),
         ],
@@ -167,6 +240,70 @@ class SettingsScreen extends StatelessWidget {
               ),
           ],
         ),
+      ),
+    );
+  }
+
+  void _confirmDeleteData(BuildContext context) {
+    final t = AppLocalizations.of(context);
+
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Text(t.deleteDataTitle),
+        content: Text(t.deleteDataConfirm),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: Text(t.cancel),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(ctx);
+              context.read<AuthCubit>().deleteData();
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(t.deleteDataSuccess),
+                  backgroundColor: Colors.green,
+                ),
+              );
+            },
+            child: Text(
+              t.deleteDataTitle,
+              style: const TextStyle(color: AppTheme.periodRed),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _confirmDeleteAccount(BuildContext context) {
+    final t = AppLocalizations.of(context);
+
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Text(t.deleteAccountTitle),
+        content: Text(t.deleteAccountConfirm),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: Text(t.cancel),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(ctx);
+              context.read<AuthCubit>().deleteAccount();
+            },
+            child: Text(
+              t.deleteAccountTitle,
+              style: const TextStyle(color: AppTheme.periodRed),
+            ),
+          ),
+        ],
       ),
     );
   }

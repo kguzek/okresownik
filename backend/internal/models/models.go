@@ -18,6 +18,10 @@ type User struct {
 	PartnerID    *uint          `json:"partnerId,omitempty"`
 	Partner      *User          `gorm:"foreignKey:PartnerID" json:"partner,omitempty"`
 	CycleDays    []CycleDay     `json:"cycleDays,omitempty"`
+
+	TermsAcceptedAt   *time.Time `json:"termsAcceptedAt,omitempty"`
+	PrivacyAcceptedAt *time.Time `json:"privacyAcceptedAt,omitempty"`
+	ConsentGrantedAt  *time.Time `json:"consentGrantedAt,omitempty"`
 }
 
 type FlowLevel string

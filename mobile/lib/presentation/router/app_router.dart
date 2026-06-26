@@ -7,6 +7,7 @@ import '../../logic/auth/auth_cubit.dart';
 import '../../logic/auth/auth_state.dart';
 import '../screens/auth/login_screen.dart';
 import '../screens/auth/register_screen.dart';
+import '../screens/auth/terms_acceptance_screen.dart';
 import '../screens/dashboard/dashboard_screen.dart';
 import '../screens/partner/partner_share_screen.dart';
 import '../screens/partner/partner_view_screen.dart';
@@ -21,9 +22,16 @@ GoRouter createRouter(AuthCubit authCubit) {
       final isAuth = authState.status == AuthStatus.authenticated;
       final isAuthRoute = state.matchedLocation == '/login' ||
           state.matchedLocation == '/register';
+      final isAccepting = state.matchedLocation == '/accept-terms';
 
-      if (!isAuth && !isAuthRoute) return '/login';
+      if (!isAuth && !isAuthRoute && !isAccepting) return '/login';
       if (isAuth && isAuthRoute) return '/dashboard';
+
+      if (isAuth && !isAccepting) {
+        final hasAccepted = authState.hasAcceptedAll;
+        if (!hasAccepted) return '/accept-terms';
+      }
+
       return null;
     },
     routes: [
@@ -34,6 +42,10 @@ GoRouter createRouter(AuthCubit authCubit) {
       GoRoute(
         path: '/register',
         builder: (_, _) => const RegisterScreen(),
+      ),
+      GoRoute(
+        path: '/accept-terms',
+        builder: (_, _) => const TermsAcceptanceScreen(),
       ),
       GoRoute(
         path: '/dashboard',

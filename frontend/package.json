@@ -4,8 +4,8 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite-react-ssg dev",
-    "build": "vite-react-ssg build",
+    "dev": "vite",
+    "build": "vite build",
     "preview": "vite preview",
     "lint": "biome check .",
     "lint:fix": "biome check --write .",
@@ -23,6 +23,7 @@
     "motion": "^12.41.0",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
+    "react-router-dom": "^7.18.0",
     "tailwind-merge": "^3.6.0"
   },
   "devDependencies": {

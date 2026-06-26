@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../core/api/api_client.dart';
@@ -14,6 +16,9 @@ class AuthRepository {
     required String email,
     required String password,
     required String name,
+    bool termsAccepted = false,
+    bool privacyAccepted = false,
+    bool consentGranted = false,
   }) async {
     final response = await _api.post(
       ApiEndpoints.register,
@@ -21,6 +26,9 @@ class AuthRepository {
         'email': email,
         'password': password,
         'name': name,
+        'termsAccepted': termsAccepted,
+        'privacyAccepted': privacyAccepted,
+        'consentGranted': consentGranted,
       },
       withAuth: false,
     );
@@ -71,7 +79,12 @@ class AuthRepository {
     final prefs = await SharedPreferences.getInstance();
     final userData = prefs.getString(AppConfig.userDataKey);
     if (userData == null) return null;
-    return UserModel.fromJson({'id': 0, 'email': '', 'name': '', 'partnerCode': ''});
+    try {
+      final json = jsonDecode(userData) as Map<String, dynamic>;
+      return UserModel.fromJson(json);
+    } catch (_) {
+      return null;
+    }
   }
 
   Future<void> _saveToken(String token) async {
@@ -81,6 +94,23 @@ class AuthRepository {
 
   Future<void> _saveUser(UserModel user) async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(AppConfig.userDataKey, user.toJson().toString());
+    await prefs.setString(AppConfig.userDataKey, jsonEncode(user.toJson()));
+  }
+
+  Future<void> updateSavedUser(UserModel user) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(AppConfig.userDataKey, jsonEncode(user.toJson()));
+  }
+
+  Future<void> acceptTerms() async {
+    await _api.post(ApiEndpoints.acceptTerms, body: {});
+  }
+
+  Future<void> deleteData() async {
+    await _api.post(ApiEndpoints.deleteData, body: {});
+  }
+
+  Future<void> deleteAccount() async {
+    await _api.post(ApiEndpoints.deleteAccount, body: {});
   }
 }

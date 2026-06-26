@@ -155,4 +155,51 @@ class AppLocalizationsEn extends AppLocalizations {
   String get polish => 'Polish';
   @override
   String get english => 'English';
+
+  @override
+  String get acceptTerms =>
+      'I accept the Terms of Service of the Okresownik app (opens in browser)';
+  @override
+  String get acceptPrivacy =>
+      'I accept the Privacy Policy of the Okresownik app (opens in browser)';
+  @override
+  String get consentDataProcessing =>
+      'I consent to the processing of my sensitive data (sexual and reproductive health data) by the Administrator for the purpose of providing cycle tracking and fertility prediction services. The data processing statement is included in the Privacy Policy (opens in browser).';
+  @override
+  String get acceptAllRequired =>
+      'To create an account, you must accept the Terms of Service, Privacy Policy, and consent to the processing of sensitive data.';
+  @override
+  String get acceptAndContinue => 'Accept and continue';
+
+  @override
+  String get legalUpdateTitle => 'Legal Update';
+  @override
+  String get legalUpdateSubtitle =>
+      'Due to GDPR requirements, please review and accept the updated documents.';
+  @override
+  String get consentSummaryTitle => 'Sensitive Data Processing';
+  @override
+  String get consentSummaryBody =>
+      'Okresownik processes your sexual and reproductive health data (including menstruation dates, intercourse information, fertility predictions) to provide cycle tracking services. Per Article 9 of GDPR, processing this data requires your explicit consent. You may withdraw consent, delete your data, or delete your account at any time in the app settings.';
+
+  @override
+  String get deleteDataTitle => 'Delete all data';
+  @override
+  String get deleteDataSubtitle =>
+      'Deletes all cycle data, notes, and connections, but keeps your account';
+  @override
+  String get deleteDataConfirm =>
+      'Are you sure you want to delete all your data? Your account will remain active, but all cycle data, notes, and partner connections will be permanently deleted. This action cannot be undone.';
+  @override
+  String get deleteDataSuccess =>
+      'All data has been deleted. You can continue using the app.';
+
+  @override
+  String get deleteAccountTitle => 'Delete account';
+  @override
+  String get deleteAccountSubtitle =>
+      'Permanently deletes your account and all associated data';
+  @override
+  String get deleteAccountConfirm =>
+      'Are you sure you want to delete your account? This will permanently delete all data, including cycle data, notes, and partner connections. This action cannot be undone.';
 }

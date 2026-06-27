@@ -49,6 +49,13 @@ func main() {
 	mux.HandleFunc("/api/auth/register", authHandler.Register)
 	mux.HandleFunc("/api/auth/login", authHandler.Login)
 
+	authMw := middleware.AuthMiddleware(cfg.JWTSecret)
+	acceptanceMw := middleware.AcceptanceCheckMiddleware(db)
+
+	mux.Handle("/api/auth/accept-terms", authMw(http.HandlerFunc(authHandler.AcceptTerms)))
+	mux.Handle("/api/auth/delete-data", authMw(http.HandlerFunc(authHandler.DeleteData)))
+	mux.Handle("/api/auth/delete-account", authMw(http.HandlerFunc(authHandler.DeleteAccount)))
+
 	protected := http.NewServeMux()
 	protected.HandleFunc("/api/cycle/days", func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
@@ -111,9 +118,8 @@ func main() {
 		middleware.WriteError(w, http.StatusMethodNotAllowed, "method not allowed")
 	})
 
-	authMw := middleware.AuthMiddleware(cfg.JWTSecret)
-	mux.Handle("/api/cycle/", authMw(middleware.JSON(protected)))
-	mux.Handle("/api/partner/", authMw(middleware.JSON(protected)))
+	mux.Handle("/api/cycle/", acceptanceMw(authMw(middleware.JSON(protected))))
+	mux.Handle("/api/partner/", acceptanceMw(authMw(middleware.JSON(protected))))
 
 	handler := middleware.CORSMiddleware(cfg.AllowedOrigins)(middleware.JSON(mux))
 

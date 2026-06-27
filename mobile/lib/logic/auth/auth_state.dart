@@ -15,6 +15,8 @@ class AuthState extends Equatable {
     this.error,
   });
 
+  bool get hasAcceptedAll => user?.hasAcceptedAll ?? false;
+
   AuthState copyWith({
     AuthStatus? status,
     UserModel? user,

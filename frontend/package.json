@@ -4,9 +4,9 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite-react-ssg dev",
-    "build": "vite-react-ssg build",
-    "preview": "vite preview",
+    "dev": "react-router dev",
+    "build": "react-router build",
+    "preview": "vite preview --outDir build/client",
     "lint": "biome check .",
     "lint:fix": "biome check --write .",
     "format": "prettier --write --ignore-unknown .",
@@ -17,22 +17,25 @@
   "dependencies": {
     "@radix-ui/react-avatar": "^1.2.0",
     "@radix-ui/react-slot": "^1.3.0",
+    "@react-router/node": "^8.0.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^0.510.0",
     "motion": "^12.41.0",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
-    "tailwind-merge": "^3.6.0"
+    "react-router": "^8.0.1",
+    "tailwind-merge": "^3.6.0",
+    "isbot": "^5"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.5.1",
     "@ianvs/prettier-plugin-sort-imports": "^4.7.1",
+    "@react-router/dev": "^8.0.1",
     "@tailwindcss/vite": "^4.3.1",
     "@types/node": "^24.13.2",
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
-    "@vitejs/plugin-react": "^6.0.3",
     "husky": "^9.1.7",
     "lint-staged": "^17.0.8",
     "oxlint": "^1.71.0",
@@ -40,8 +43,7 @@
     "prettier-plugin-tailwindcss": "^0.8.0",
     "tailwindcss": "^4.3.1",
     "typescript": "~6.0.3",
-    "vite": "^8.1.0",
-    "vite-react-ssg": "0.9.1-beta.1"
+    "vite": "^8.1.0"
   },
   "lint-staged": {
     "*": "prettier --write --ignore-unknown",

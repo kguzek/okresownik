@@ -155,4 +155,51 @@ class AppLocalizationsPl extends AppLocalizations {
   String get polish => 'Polski';
   @override
   String get english => 'Angielski';
+
+  @override
+  String get acceptTerms =>
+      'Akceptuję Regulamin aplikacji Okresownik (otwórz w przeglądarce)';
+  @override
+  String get acceptPrivacy =>
+      'Akceptuję Politykę prywatności aplikacji Okresownik (otwórz w przeglądarce)';
+  @override
+  String get consentDataProcessing =>
+      'Wyrażam zgodę na przetwarzanie danych wrażliwych (danych o zdrowiu seksualnym i reprodukcyjnym) przez Administratora w celu świadczenia usług śledzenia cyklu i prognozowania płodności. Oświadczenie o przetwarzaniu danych zawarte jest w Polityce prywatności (otwórz w przeglądarce).';
+  @override
+  String get acceptAllRequired =>
+      'Aby utworzyć konto, musisz zaakceptować Regulamin, Politykę prywatności i wyrazić zgodę na przetwarzanie danych wrażliwych.';
+  @override
+  String get acceptAndContinue => 'Akceptuję i kontynuuję';
+
+  @override
+  String get legalUpdateTitle => 'Aktualizacja prawna';
+  @override
+  String get legalUpdateSubtitle =>
+      'W związku z wymogami RODO prosimy o zapoznanie się i zaakceptowanie zaktualizowanych dokumentów.';
+  @override
+  String get consentSummaryTitle => 'Przetwarzanie danych wrażliwych';
+  @override
+  String get consentSummaryBody =>
+      'Okresownik przetwarza Twoje dane dotyczące zdrowia seksualnego i reprodukcyjnego (m.in. daty menstruacji, informacje o współżyciu, prognozy płodności) w celu świadczenia usług śledzenia cyklu. Zgodnie z art. 9 RODO, przetwarzanie tych danych wymaga Twojej wyraźnej zgody. Możesz w dowolnym momencie wycofać zgodę, usunąć dane lub usunąć konto w ustawieniach aplikacji.';
+
+  @override
+  String get deleteDataTitle => 'Usuń wszystkie dane';
+  @override
+  String get deleteDataSubtitle =>
+      'Usuwa wszystkie dane cyklu, notatki i powiązania, ale zachowuje konto';
+  @override
+  String get deleteDataConfirm =>
+      'Czy na pewno chcesz usunąć wszystkie swoje dane? Konto pozostanie aktywne, ale wszystkie dane cyklu, notatki i powiązania partnerskie zostaną trwale usunięte. Tej operacji nie można cofnąć.';
+  @override
+  String get deleteDataSuccess =>
+      'Wszystkie dane zostały usunięte. Możesz nadal korzystać z aplikacji.';
+
+  @override
+  String get deleteAccountTitle => 'Usuń konto';
+  @override
+  String get deleteAccountSubtitle =>
+      'Trwale usuwa konto i wszystkie powiązane dane';
+  @override
+  String get deleteAccountConfirm =>
+      'Czy na pewno chcesz usunąć swoje konto? Spowoduje to trwałe usunięcie wszystkich danych, w tym danych cyklu, notatek i powiązań partnerskich. Tej operacji nie można cofnąć.';
 }

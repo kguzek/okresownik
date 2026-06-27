@@ -16,15 +16,15 @@ import (
 )
 
 var (
-	ErrEmailTaken             = errors.New("email already registered")
-	ErrInvalidEmail           = errors.New("invalid email format")
-	ErrInvalidPassword        = errors.New("password must be at least 8 characters")
-	ErrInvalidName            = errors.New("name is required")
-	ErrInvalidCredentials     = errors.New("invalid email or password")
-	ErrTermsNotAccepted       = errors.New("you must accept the Terms of Service")
-	ErrPrivacyNotAccepted     = errors.New("you must accept the Privacy Policy")
-	ErrConsentNotGranted      = errors.New("you must consent to data processing")
-	ErrUserNotFound           = errors.New("user not found")
+	ErrEmailTaken         = errors.New("email already registered")
+	ErrInvalidEmail       = errors.New("invalid email format")
+	ErrInvalidPassword    = errors.New("password must be at least 8 characters")
+	ErrInvalidName        = errors.New("name is required")
+	ErrInvalidCredentials = errors.New("invalid email or password")
+	ErrTermsNotAccepted   = errors.New("you must accept the Terms of Service")
+	ErrPrivacyNotAccepted = errors.New("you must accept the Privacy Policy")
+	ErrConsentNotGranted  = errors.New("you must consent to data processing")
+	ErrUserNotFound       = errors.New("user not found")
 )
 
 type AuthService struct {

@@ -1,4 +1,13 @@
-import { Link } from "react-router-dom";
+import type { MetaFunction } from "react-router";
+import { Link } from "react-router";
+
+export const meta: MetaFunction = () => [
+  { title: "Regulamin — Okresownik" },
+  {
+    name: "description",
+    content: "Regulamin aplikacji Okresownik — zasady korzystania z kalendarzyka menstruacyjnego.",
+  },
+];
 
 export default function Regulamin() {
   return (

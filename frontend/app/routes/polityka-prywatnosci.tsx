@@ -1,4 +1,14 @@
-import { Link } from "react-router-dom";
+import type { MetaFunction } from "react-router";
+import { Link } from "react-router";
+
+export const meta: MetaFunction = () => [
+  { title: "Polityka prywatności — Okresownik" },
+  {
+    name: "description",
+    content:
+      "Polityka prywatności aplikacji Okresownik — zasady przetwarzania danych osobowych i wrażliwych.",
+  },
+];
 
 export default function PolitykaPrywatnosci() {
   return (

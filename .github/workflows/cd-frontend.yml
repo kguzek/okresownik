@@ -55,7 +55,7 @@ jobs:
       - name: Upload assets
         uses: actions/upload-pages-artifact@v5
         with:
-          path: frontend/dist
+          path: frontend/build/client
 
       - name: Deploy to GitHub Pages
         id: deployment

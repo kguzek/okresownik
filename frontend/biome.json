@@ -20,6 +20,13 @@
     }
   },
   "files": {
-    "includes": ["**/src/**/*.ts", "**/src/**/*.tsx", "!**/node_modules", "!**/dist"]
+    "includes": [
+      "**/src/**/*.ts",
+      "**/src/**/*.tsx",
+      "**/app/**/*.ts",
+      "**/app/**/*.tsx",
+      "!**/node_modules",
+      "!**/dist"
+    ]
   }
 }

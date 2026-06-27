@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 
 export default function PolitykaPrywatnosci() {
   return (
-    <div className="mx-auto max-w-3xl px-4 py-12 text-gray-800">
+    <div className="from-surface mx-auto min-h-screen max-w-3xl px-4 py-12 text-gray-800 bg-gradient-to-b via-white to-white">
       <Link
         to="/"
         className="text-primary mb-6 inline-block text-sm underline decoration-transparent transition-colors hover:decoration-current"
@@ -15,8 +15,7 @@ export default function PolitykaPrywatnosci() {
         <h2 className="mb-3 text-xl font-semibold">1. Administrator danych</h2>
         <p className="leading-relaxed">
           Administratorem danych osobowych Użytkowników aplikacji Okresownik jest
-          Konrad Guzek, ul. Kosiarzy 37, 02-953 Warszawa, NIP: 9512545352, adres
-          e-mail:{" "}
+          Konrad Guzek, ul. Edwarda Wittiga 27/4, 51-628 Wrocław, adres e-mail:{" "}
           <a
             href="mailto:kontakt@okresownik.pl"
             className="text-primary underline decoration-transparent transition-colors hover:decoration-current"
@@ -272,7 +271,7 @@ export default function PolitykaPrywatnosci() {
         <p className="leading-relaxed">
           Administrator zastrzega sobie prawo do zmiany Polityki prywatności.
           Użytkownicy zostaną powiadomieni o zmianach za pośrednictwem Aplikacji.
-          Polityka prywatności wchodzi w życie z dniem 1 lipca 2026 roku.
+          Polityka prywatności wchodzi w życie z dniem 27 czerwca 2026 roku.
         </p>
       </section>
 

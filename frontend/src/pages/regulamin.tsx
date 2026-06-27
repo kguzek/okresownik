@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 
 export default function Regulamin() {
   return (
-    <div className="mx-auto max-w-3xl px-4 py-12 text-gray-800">
+    <div className="from-surface mx-auto min-h-screen max-w-3xl px-4 py-12 text-gray-800 bg-gradient-to-b via-white to-white">
       <Link
         to="/"
         className="text-primary mb-6 inline-block text-sm underline decoration-transparent transition-colors hover:decoration-current"
@@ -15,8 +15,8 @@ export default function Regulamin() {
         <h2 className="mb-3 text-xl font-semibold">1. Postanowienia ogólne</h2>
         <p className="mb-2 leading-relaxed">
           Niniejszy Regulamin określa zasady korzystania z aplikacji mobilnej Okresownik
-          (dalej: "Aplikacja"), udostępnianej przez Konrada Guzka, ul. Kosiarzy 37, 02-953
-          Warszawa, NIP: 9512545352 (dalej: "Administrator").
+          (dalej: &bdquo;Aplikacja&rdquo;), udostępnianej przez Konrada Guzek, ul.
+          Edwarda Wittiga 27/4, 51-627 Wrocław (dalej: &bdquo;Administrator&rdquo;).
         </p>
         <p className="mb-2 leading-relaxed">
           Aplikacja Okresownik służy do śledzenia cyklu menstruacyjnego, prognozowania
@@ -35,7 +35,7 @@ export default function Regulamin() {
         <h2 className="mb-3 text-xl font-semibold">2. Definicje</h2>
         <ul className="list-disc space-y-1 pl-6 leading-relaxed">
           <li>
-            <strong>Administrator</strong> – Konrad Guzek, ul. Kosiarzy 37, 02-953 Warszawa.
+            <strong>Administrator</strong> – Konrad Guzek, ul. Edwarda Wittiga 27/4, 51-627 Wrocław
           </li>
           <li>
             <strong>Aplikacja</strong> – mobilne oprogramowanie Okresownik dostępne na
@@ -234,7 +234,7 @@ export default function Regulamin() {
           Administratora.
         </p>
         <p className="leading-relaxed">
-          Regulamin wchodzi w życie z dniem 1 lipca 2026 roku.
+          Regulamin wchodzi w życie z dniem 27 czerwca 2026 roku.
         </p>
       </section>
 

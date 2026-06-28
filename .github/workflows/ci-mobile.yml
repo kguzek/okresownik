@@ -1,9 +1,7 @@
-name: CD (Mobile)
+name: CI (Mobile)
 
 permissions:
-  contents: write
-  issues: write
-  pull-requests: write
+  contents: read
 
 on:
   push:
@@ -18,12 +16,8 @@ on:
       - ".github/workflows/*-mobile.yml"
       - "!**/*.md"
 
-concurrency:
-  group: ${{ github.workflow }}-${{ github.head_ref && github.ref || github.run_id }}
-  cancel-in-progress: true
-
 jobs:
-  release:
+  check:
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -44,8 +38,8 @@ jobs:
       - name: Install Flutter dependencies
         run: flutter pub get
 
-      - name: Publish release
-        if: github.event_name == 'push'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npx --package semantic-release@24 --package @semantic-release/exec@7 --package @semantic-release/github@11 --package @semantic-release/git@10 semantic-release
+      - name: Build APK
+        run: flutter build apk --release
+
+      - name: Build AAB
+        run: flutter build appbundle --release

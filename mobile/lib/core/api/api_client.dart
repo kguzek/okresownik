@@ -25,25 +25,20 @@ class ApiClient {
     Object? error,
   }) {
     if (!kDebugMode) return;
-    final buf = StringBuffer();
-    buf.writeln('');
-    buf.writeln('════════════════════════════════════════════');
-    buf.writeln('$method $endpoint');
+    final path = endpoint.startsWith('http') ? Uri.parse(endpoint).path : endpoint;
+    final buf = StringBuffer('[API] $method $path');
     if (queryParams != null && queryParams.isNotEmpty) {
-      buf.writeln('  query: $queryParams');
-    }
-    if (body != null) {
-      buf.writeln('  body: $body');
+      buf.write(' ?$queryParams');
     }
     if (response != null) {
-      buf.writeln('  <- ${response.statusCode} ${response.reasonPhrase}');
-      buf.writeln('  body: ${response.body}');
+      buf.write('  ${response.statusCode}');
+      if (response.body.isNotEmpty && response.body.length < 200) {
+        buf.write('  ${response.body}');
+      }
     }
     if (error != null) {
-      buf.writeln('  !!! $error');
+      buf.write('  ! $error');
     }
-    buf.writeln('════════════════════════════════════════════');
-    buf.writeln('');
     debugPrint(buf.toString());
   }
 

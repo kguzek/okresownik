@@ -106,6 +106,11 @@ abstract class AppLocalizations {
 
   String get appVersion;
   String get apiVersion;
+
+  String get updateAvailable;
+  String get updateMessage;
+  String get update;
+  String get ignore;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

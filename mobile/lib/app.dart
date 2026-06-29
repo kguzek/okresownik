@@ -14,6 +14,7 @@ import 'logic/locale/locale_cubit.dart';
 import 'logic/partner/partner_cubit.dart';
 import 'logic/settings/calendar_settings_cubit.dart';
 import 'presentation/router/app_router.dart';
+import 'presentation/widgets/version_check_handler.dart';
 
 class OkresownikApp extends StatefulWidget {
   const OkresownikApp({super.key});
@@ -23,6 +24,8 @@ class OkresownikApp extends StatefulWidget {
 }
 
 class _OkresownikAppState extends State<OkresownikApp> {
+  final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
+
   late final ApiClient _apiClient;
   late final AuthRepository _authRepository;
   late final CycleRepository _cycleRepository;
@@ -50,6 +53,13 @@ class _OkresownikAppState extends State<OkresownikApp> {
     _calendarSettingsCubit = CalendarSettingsCubit();
 
     _authCubit.checkAuth();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _checkVersion());
+  }
+
+  Future<void> _checkVersion() async {
+    final ctx = _navigatorKey.currentContext;
+    if (ctx == null) return;
+    await checkVersionOnStartup(apiClient: _apiClient, context: ctx);
   }
 
   @override
@@ -65,7 +75,7 @@ class _OkresownikAppState extends State<OkresownikApp> {
 
   @override
   Widget build(BuildContext context) {
-    final router = createRouter(_authCubit);
+    final router = createRouter(_authCubit, navigatorKey: _navigatorKey);
 
     return MultiBlocProvider(
       providers: [

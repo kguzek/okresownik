@@ -13,8 +13,9 @@ import '../screens/partner/partner_share_screen.dart';
 import '../screens/partner/partner_view_screen.dart';
 import '../screens/settings/settings_screen.dart';
 
-GoRouter createRouter(AuthCubit authCubit) {
+GoRouter createRouter(AuthCubit authCubit, {GlobalKey<NavigatorState>? navigatorKey}) {
   return GoRouter(
+    navigatorKey: navigatorKey,
     refreshListenable: _AuthListener(authCubit),
     initialLocation: '/dashboard',
     redirect: (context, state) {

@@ -10,6 +10,7 @@ import '../../../l10n/app_localizations.dart';
 import '../../../logic/auth/auth_cubit.dart';
 import '../../../logic/locale/locale_cubit.dart';
 import '../../../logic/settings/calendar_settings_cubit.dart';
+import '../../widgets/version_check_handler.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
@@ -193,6 +194,12 @@ class SettingsScreen extends StatelessWidget {
                     future: _fetchBackendVersion(),
                     builder: (context, snapshot) {
                       final apiVersion = snapshot.data;
+                      if (snapshot.connectionState == ConnectionState.done &&
+                          apiVersion != null) {
+                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                          _checkVersion(context, apiVersion);
+                        });
+                      }
                       return Center(
                         child: Text(
                           '${t.apiVersion}: ${apiVersion ?? '-'}',
@@ -361,6 +368,10 @@ class SettingsScreen extends StatelessWidget {
   String _weekdayName(int weekday, Locale locale) {
     final mondayBasedDate = DateTime(2026, 1, 4 + weekday);
     return DateFormat.EEEE(locale.languageCode).format(mondayBasedDate);
+  }
+
+  Future<void> _checkVersion(BuildContext context, String apiVersion) async {
+    await checkVersionFromSettings(apiVersion: apiVersion, context: context);
   }
 }
 

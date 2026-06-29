@@ -207,4 +207,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get appVersion => 'App version';
   @override
   String get apiVersion => 'API version';
+
+  @override
+  String get updateAvailable => 'Update Available';
+  @override
+  String get updateMessage =>
+      'A new version of Okresownik is available. Please update to the latest version for the best experience.';
+  @override
+  String get update => 'Update';
+  @override
+  String get ignore => 'Ignore';
 }

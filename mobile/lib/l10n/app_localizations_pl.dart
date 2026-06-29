@@ -207,4 +207,14 @@ class AppLocalizationsPl extends AppLocalizations {
   String get appVersion => 'Wersja aplikacji';
   @override
   String get apiVersion => 'Wersja API';
+
+  @override
+  String get updateAvailable => 'Dostępna aktualizacja';
+  @override
+  String get updateMessage =>
+      'Nowa wersja Okresownika jest dostępna. Zaktualizuj aplikację, aby uzyskać najlepsze doświadczenia.';
+  @override
+  String get update => 'Aktualizuj';
+  @override
+  String get ignore => 'Ignoruj';
 }

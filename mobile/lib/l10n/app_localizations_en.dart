@@ -202,4 +202,9 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get deleteAccountConfirm =>
       'Are you sure you want to delete your account? This will permanently delete all data, including cycle data, notes, and partner connections. This action cannot be undone.';
+
+  @override
+  String get appVersion => 'App version';
+  @override
+  String get apiVersion => 'API version';
 }

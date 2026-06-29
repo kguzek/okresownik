@@ -202,4 +202,9 @@ class AppLocalizationsPl extends AppLocalizations {
   @override
   String get deleteAccountConfirm =>
       'Czy na pewno chcesz usunąć swoje konto? Spowoduje to trwałe usunięcie wszystkich danych, w tym danych cyklu, notatek i powiązań partnerskich. Tej operacji nie można cofnąć.';
+
+  @override
+  String get appVersion => 'Wersja aplikacji';
+  @override
+  String get apiVersion => 'Wersja API';
 }

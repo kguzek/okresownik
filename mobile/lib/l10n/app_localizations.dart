@@ -103,6 +103,9 @@ abstract class AppLocalizations {
   String get deleteAccountTitle;
   String get deleteAccountSubtitle;
   String get deleteAccountConfirm;
+
+  String get appVersion;
+  String get apiVersion;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

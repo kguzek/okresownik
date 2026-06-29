@@ -1,6 +1,7 @@
 class ApiEndpoints {
   ApiEndpoints._();
 
+  static const String health = '/health';
   static const String register = '/api/auth/register';
   static const String login = '/api/auth/login';
   static const String acceptTerms = '/api/auth/accept-terms';

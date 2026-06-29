@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'api_endpoints.dart';
 import 'api_exceptions.dart';
 import '../constants/app_config.dart';
 
@@ -65,6 +66,10 @@ class ApiClient {
   Future<String?> _getToken() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString(AppConfig.tokenKey);
+  }
+
+  Future<Map<String, dynamic>> health() {
+    return get(ApiEndpoints.health, withAuth: false);
   }
 
   Future<Map<String, dynamic>> get(

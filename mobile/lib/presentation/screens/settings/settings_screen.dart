@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 
 import '../../../core/api/api_client.dart';
+import '../../../core/app_version_provider.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../logic/auth/auth_cubit.dart';
@@ -41,7 +41,10 @@ class SettingsScreen extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       ListTile(
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 4,
+                        ),
                         leading: Container(
                           width: 40,
                           height: 40,
@@ -49,22 +52,34 @@ class SettingsScreen extends StatelessWidget {
                             color: AppTheme.primaryLight,
                             borderRadius: BorderRadius.circular(10),
                           ),
-                          child: const Icon(Icons.language, color: AppTheme.primary, size: 22),
+                          child: const Icon(
+                            Icons.language,
+                            color: AppTheme.primary,
+                            size: 22,
+                          ),
                         ),
                         title: Text(
                           t.language,
                           style: const TextStyle(fontWeight: FontWeight.w500),
                         ),
                         subtitle: Text(
-                          currentLocale.languageCode == 'pl' ? t.polish : t.english,
+                          currentLocale.languageCode == 'pl'
+                              ? t.polish
+                              : t.english,
                           style: TextStyle(color: AppTheme.onSurfaceVariant),
                         ),
-                        trailing: const Icon(Icons.chevron_right, color: AppTheme.onSurfaceVariant),
+                        trailing: const Icon(
+                          Icons.chevron_right,
+                          color: AppTheme.onSurfaceVariant,
+                        ),
                         onTap: () => _showLanguagePicker(context),
                       ),
                       const Divider(height: 1, color: AppTheme.divider),
                       ListTile(
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 4,
+                        ),
                         leading: Container(
                           width: 40,
                           height: 40,
@@ -86,7 +101,10 @@ class SettingsScreen extends StatelessWidget {
                           _weekdayName(firstWeekday, currentLocale),
                           style: TextStyle(color: AppTheme.onSurfaceVariant),
                         ),
-                        trailing: const Icon(Icons.chevron_right, color: AppTheme.onSurfaceVariant),
+                        trailing: const Icon(
+                          Icons.chevron_right,
+                          color: AppTheme.onSurfaceVariant,
+                        ),
                         onTap: () => _showFirstWeekdayPicker(context),
                       ),
                     ],
@@ -99,7 +117,10 @@ class SettingsScreen extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       ListTile(
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 4,
+                        ),
                         leading: Container(
                           width: 40,
                           height: 40,
@@ -121,12 +142,18 @@ class SettingsScreen extends StatelessWidget {
                           t.deleteDataSubtitle,
                           style: TextStyle(color: AppTheme.onSurfaceVariant),
                         ),
-                        trailing: const Icon(Icons.chevron_right, color: AppTheme.onSurfaceVariant),
+                        trailing: const Icon(
+                          Icons.chevron_right,
+                          color: AppTheme.onSurfaceVariant,
+                        ),
                         onTap: () => _confirmDeleteData(context),
                       ),
                       const Divider(height: 1, color: AppTheme.divider),
                       ListTile(
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 4,
+                        ),
                         leading: Container(
                           width: 40,
                           height: 40,
@@ -142,13 +169,19 @@ class SettingsScreen extends StatelessWidget {
                         ),
                         title: Text(
                           t.deleteAccountTitle,
-                          style: TextStyle(fontWeight: FontWeight.w500, color: AppTheme.periodRed),
+                          style: TextStyle(
+                            fontWeight: FontWeight.w500,
+                            color: AppTheme.periodRed,
+                          ),
                         ),
                         subtitle: Text(
                           t.deleteAccountSubtitle,
                           style: TextStyle(color: AppTheme.onSurfaceVariant),
                         ),
-                        trailing: const Icon(Icons.chevron_right, color: AppTheme.onSurfaceVariant),
+                        trailing: const Icon(
+                          Icons.chevron_right,
+                          color: AppTheme.onSurfaceVariant,
+                        ),
                         onTap: () => _confirmDeleteAccount(context),
                       ),
                     ],
@@ -175,15 +208,17 @@ class SettingsScreen extends StatelessWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  FutureBuilder<PackageInfo>(
-                    future: PackageInfo.fromPlatform(),
+                  FutureBuilder<String>(
+                    future: AppVersionProvider.current(),
                     builder: (context, snapshot) {
-                      final appVersion = snapshot.data?.version ?? '';
+                      final version = snapshot.data;
                       return Center(
                         child: Text(
-                          '${t.appVersion}: v$appVersion',
+                          '${t.appVersion}: ${version == null || version.isEmpty ? '-' : 'v$version'}',
                           style: TextStyle(
-                            color: AppTheme.onSurfaceVariant.withValues(alpha: 0.6),
+                            color: AppTheme.onSurfaceVariant.withValues(
+                              alpha: 0.6,
+                            ),
                             fontSize: 13,
                           ),
                         ),
@@ -204,7 +239,9 @@ class SettingsScreen extends StatelessWidget {
                         child: Text(
                           '${t.apiVersion}: ${apiVersion ?? '-'}',
                           style: TextStyle(
-                            color: AppTheme.onSurfaceVariant.withValues(alpha: 0.6),
+                            color: AppTheme.onSurfaceVariant.withValues(
+                              alpha: 0.6,
+                            ),
                             fontSize: 13,
                           ),
                         ),
@@ -279,9 +316,11 @@ class SettingsScreen extends StatelessWidget {
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            for (var weekday = DateTime.monday;
-                weekday <= DateTime.sunday;
-                weekday++)
+            for (
+              var weekday = DateTime.monday;
+              weekday <= DateTime.sunday;
+              weekday++
+            )
               ListTile(
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),

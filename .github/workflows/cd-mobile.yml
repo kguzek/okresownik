@@ -10,12 +10,12 @@ on:
     branches: ["main"]
     paths:
       - "mobile/**"
-      - ".github/workflows/*-mobile.yml"
+      - ".github/workflows/cd-mobile.yml"
       - "!**/*.md"
   pull_request:
     paths:
       - "mobile/**"
-      - ".github/workflows/*-mobile.yml"
+      - ".github/workflows/cd-mobile.yml"
       - "!**/*.md"
 
 concurrency:

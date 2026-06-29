@@ -1,10 +1,8 @@
-import 'dart:io' show Platform;
-
 import 'package:flutter/material.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../core/api/api_client.dart';
+import '../../core/app_version_provider.dart';
 import '../../l10n/app_localizations.dart';
 
 Future<void> checkVersionOnStartup({
@@ -32,15 +30,12 @@ Future<void> checkVersionFromSettings({
 Future<void> _checkAndShow(String apiVersion, BuildContext context) async {
   if (!context.mounted) return;
 
-  final info = await PackageInfo.fromPlatform();
-  debugPrint('[version] app=${info.version} api=$apiVersion');
+  final appVersion = await AppVersionProvider.current();
+  debugPrint('[version] app=$appVersion api=$apiVersion');
 
-  if (!_isUpdateNeeded(info.version, apiVersion)) return;
+  if (appVersion.isEmpty) return;
 
-  if (Platform.isAndroid && info.installerStore != null) {
-    debugPrint('[version] skipped: Google Play install (${info.installerStore})');
-    return;
-  }
+  if (!_isUpdateNeeded(appVersion, apiVersion)) return;
 
   if (!context.mounted) return;
   _showUpdateDialog(context);
@@ -53,8 +48,9 @@ bool _isUpdateNeeded(String appVersion, String apiVersion) {
   if (apiParts.isEmpty) return false;
   if (appParts.isEmpty) return true;
 
-  final len =
-      appParts.length < apiParts.length ? appParts.length : apiParts.length;
+  final len = appParts.length < apiParts.length
+      ? appParts.length
+      : apiParts.length;
   for (var i = 0; i < len; i++) {
     if (appParts[i] < apiParts[i]) return true;
     if (appParts[i] > apiParts[i]) return false;
@@ -83,10 +79,7 @@ void _showUpdateDialog(BuildContext context) {
       title: Text(t.updateAvailable),
       content: Text(t.updateMessage),
       actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(ctx),
-          child: Text(t.ignore),
-        ),
+        TextButton(onPressed: () => Navigator.pop(ctx), child: Text(t.ignore)),
         TextButton(
           onPressed: () async {
             final launched = await launchUrl(

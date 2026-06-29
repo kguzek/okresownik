@@ -15,6 +15,8 @@ import (
 	httpSwagger "github.com/swaggo/http-swagger"
 )
 
+var Version = "dev"
+
 // @title Okresownik API
 // @version 1.0
 // @description REST API for Okresownik.
@@ -118,8 +120,8 @@ func main() {
 		middleware.WriteError(w, http.StatusMethodNotAllowed, "method not allowed")
 	})
 
-	mux.Handle("/api/cycle/", acceptanceMw(authMw(middleware.JSON(protected))))
-	mux.Handle("/api/partner/", acceptanceMw(authMw(middleware.JSON(protected))))
+	mux.Handle("/api/cycle/", authMw(acceptanceMw(middleware.JSON(protected))))
+	mux.Handle("/api/partner/", authMw(acceptanceMw(middleware.JSON(protected))))
 
 	handler := middleware.CORSMiddleware(cfg.AllowedOrigins)(middleware.JSON(mux))
 
@@ -131,7 +133,8 @@ func main() {
 }
 
 type healthResponse struct {
-	Status string `json:"status"`
+	Status  string `json:"status"`
+	Version string `json:"version"`
 }
 
 // healthHandler godoc
@@ -147,5 +150,5 @@ func healthHandler(w http.ResponseWriter, r *http.Request) {
 		middleware.WriteError(w, http.StatusMethodNotAllowed, "method not allowed")
 		return
 	}
-	middleware.WriteJSON(w, http.StatusOK, healthResponse{Status: "ok"})
+	middleware.WriteJSON(w, http.StatusOK, healthResponse{Status: "ok", Version: Version})
 }

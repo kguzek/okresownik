@@ -9,7 +9,7 @@ ARG VERSION=dev
 COPY . .
 RUN CGO_ENABLED=0 GOOS=linux go build -ldflags "-X main.Version=$VERSION" -o /app/server .
 
-FROM alpine:3.20
+FROM alpine:3.24
 
 RUN apk --no-cache add ca-certificates
 

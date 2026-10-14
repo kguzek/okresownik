@@ -21,7 +21,7 @@ dependencies:
   table_calendar: ^3.3.0
   simple_gesture_detector: ^0.2.1
   url_launcher: ^6.3.3
-  cupertino_icons: ^1.0.8
+  cupertino_icons: ^2.0.0
 
 dev_dependencies:
   flutter_test:

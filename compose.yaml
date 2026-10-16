@@ -1,7 +1,7 @@
 services:
   postgres:
     image: postgres:16-alpine
-    container_name: okresownik-db
+    container_name: okresownik_postgres
     restart: unless-stopped
     environment:
       POSTGRES_DB: okresownik
@@ -21,7 +21,7 @@ services:
       dockerfile: Dockerfile
       args:
         VERSION: "${APP_VERSION:-dev}"
-    container_name: okresownik-api
+    container_name: okresownik_api
     restart: unless-stopped
     ports:
       - "6080:6080"
@@ -38,7 +38,7 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile.seed
-    container_name: okresownik-seed
+    container_name: okresownik_seeder
     restart: "no"
     environment:
       DATABASE_URL: "postgres://okresownik:okresownik@postgres:5432/okresownik?sslmode=disable"
